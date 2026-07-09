@@ -1,0 +1,177 @@
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+}
+
+/* decorative orb behind the card */
+.auth-container::before {
+  content: '';
+  position: fixed;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(157,122,255,0.12), transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  box-shadow:
+    0 0 0 1px rgba(157,122,255,0.06),
+    0 24px 64px rgba(0,0,0,0.5);
+  animation: slideUp 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+/* top glow strip */
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(157,122,255,0.5), transparent);
+}
+
+/* ─── Header ── */
+.auth-header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.auth-logo {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  display: block;
+}
+
+.auth-logo .pro { color: var(--primary-color); }
+
+.auth-header h2 {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.01em;
+}
+
+.auth-header p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* ─── Demo hint ── */
+.demo-hint {
+  background: linear-gradient(135deg, rgba(157,122,255,0.1), rgba(157,122,255,0.05));
+  border: 1px solid rgba(157,122,255,0.22);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.demo-hint strong { color: var(--primary-color); }
+
+/* ─── Form ── */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.form-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.925rem;
+  transition: all 0.22s ease;
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif;
+}
+
+.input-wrapper input::placeholder { color: var(--text-muted); }
+
+.input-wrapper input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(157,122,255,0.18);
+  background: var(--bg-elevated);
+}
+
+/* ─── Submit ── */
+.auth-submit {
+  width: 100%;
+  padding: 0.95rem;
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 12px;
+  letter-spacing: 0.01em;
+}
+
+/* ─── Footer ── */
+.auth-footer {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.auth-footer a {
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.auth-footer a:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* ─── Error ── */
+.error-message {
+  padding: 0.75rem;
+  border-radius: 10px;
+  background: rgba(248, 113, 113, 0.1);
+  color: var(--c-high);
+  font-size: 0.85rem;
+  text-align: center;
+  border: 1px solid rgba(248, 113, 113, 0.22);
+}
+
+/* ─── Animation ── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

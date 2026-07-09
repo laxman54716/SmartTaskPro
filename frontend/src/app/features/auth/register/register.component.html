@@ -1,0 +1,68 @@
+<div class="auth-container">
+  <div class="auth-card glass-panel">
+    <div class="auth-header">
+      <h2>Create Account</h2>
+      <p>Join SmartTaskPro today</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="auth-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            [(ngModel)]="userData.username" 
+            required 
+            placeholder="Choose a username"
+            autocomplete="username"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            [(ngModel)]="userData.email" 
+            required 
+            placeholder="Enter your email"
+            autocomplete="email"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            [(ngModel)]="userData.password" 
+            required 
+            minlength="6"
+            placeholder="Create a password"
+            autocomplete="new-password"
+          >
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-primary auth-submit" [disabled]="!registerForm.form.valid">
+        Sign Up
+      </button>
+
+      <div class="auth-footer">
+        <p>Already have an account? <a routerLink="/login">Log in</a></p>
+      </div>
+    </form>
+  </div>
+</div>

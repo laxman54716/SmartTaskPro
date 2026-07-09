@@ -1,0 +1,64 @@
+<div class="kanban-board">
+  <div *ngFor="let col of columns"
+       class="kanban-column"
+       [class.drag-over]="activeDragColumn === col.key"
+       (dragover)="onDragOver($event, col.key)"
+       (dragenter)="onDragEnter($event, col.key)"
+       (dragleave)="onDragLeave($event, col.key)"
+       (drop)="onDrop($event, col.key)">
+       
+    <div class="column-header" [style.border-top-color]="col.color">
+      <div class="column-title-wrap">
+        <span class="column-icon">{{ col.icon }}</span>
+        <span class="column-label">{{ col.label }}</span>
+        <span class="column-count">{{ getTasksByStatus(col.key).length }}</span>
+      </div>
+      <button class="btn-add-card" (click)="onAddTaskClick(col.key)" title="Add task to {{ col.label }}">＋</button>
+    </div>
+
+    <div class="column-cards">
+      <div *ngFor="let task of getTasksByStatus(col.key)"
+           class="kanban-card"
+           draggable="true"
+           role="button"
+           aria-label="Draggable task card"
+           tabindex="0"
+           (dragstart)="onDragStart($event, task.id)"
+           (dragend)="onDragEnd($event)"
+           (click)="onCardClick(task, $event)"
+           [class.overdue-card]="isOverdue(task)"
+           [class.task-row-done]="task.status === 'DONE'">
+           
+        <div class="task-row-left">
+          <button class="row-check" (click)="onCardClick(task, $event)" [class.checked]="task.status === 'DONE'"
+            [title]="task.status === 'DONE' ? 'Mark as Todo' : 'Mark Done'">✓</button>
+          <div class="task-row-info">
+            <span class="task-row-title" [class.done-title]="task.status === 'DONE'">{{ task.title }}</span>
+            <span class="task-row-meta">
+              <span class="category-tag sm">{{ task.category || 'General' }}</span>
+              <span class="status-pill" [class]="'status-' + task.status.toLowerCase()">{{ task.status.replace('_',' ') }}</span>
+              <span class="overdue-badge" *ngIf="isOverdue(task)">Overdue</span>
+              <!-- Labels inline -->
+              <ng-container *ngIf="task.labels && task.labels.length > 0">
+                <span class="label-chip sm" *ngFor="let label of task.labels.slice(0,2)">{{ label }}</span>
+              </ng-container>
+            </span>
+          </div>
+        </div>
+        <div class="task-row-right">
+          <span class="priority-dot" [class]="'priority-' + task.priority.toLowerCase()" [title]="task.priority"></span>
+          <span class="ai-score" *ngIf="task.aiPriorityScore">🤖 {{ task.aiPriorityScore }}</span>
+          <span class="due-date" *ngIf="task.dueDate" [class.due-overdue]="isOverdue(task)">📅 {{ getDaysRemaining(task.dueDate) }}</span>
+          <button class="action-btn edit-btn" (click)="onCardClick(task, $event)" title="Edit">✏️</button>
+          <button class="action-btn delete-btn" (click)="onDeleteClick(task.id, $event)" title="Delete">🗑</button>
+        </div>
+      </div>
+
+      <!-- Ghost / Empty dropzone helper when column is empty -->
+      <div class="empty-column-placeholder" *ngIf="getTasksByStatus(col.key).length === 0">
+        <span class="placeholder-icon">📭</span>
+        <span class="placeholder-text">Drag tasks here</span>
+      </div>
+    </div>
+  </div>
+</div>

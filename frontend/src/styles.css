@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ══════════════════════════════════════════════════════════════════
+   ABYSS & AURORA  |  3-Color Disciplined System
+   ─────────────────────────────────────────────────────────────────
+   Color 1 — Abyss    : #07080D → #181D2B  (depth layers)
+   Color 2 — Electric : #3D8EF8             (primary blue)
+   Color 3 — Coral    : #FF6B6B             (accent / energy)
+══════════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Electric Blue (Primary) ── */
+  --primary:        #3D8EF8;
+  --primary-dark:   #2B7EF0;
+  --primary-deeper: #1A6EE8;
+  --primary-soft:   rgba(61, 142, 248, 0.10);
+  --primary-mid:    rgba(61, 142, 248, 0.18);
+  --primary-glow:   rgba(61, 142, 248, 0.32);
+
+  /* ── Warm Coral (Accent) ── */
+  --accent:         #FF6B6B;
+  --accent-dark:    #F05252;
+  --accent-soft:    rgba(255, 107, 107, 0.12);
+  --accent-glow:    rgba(255, 107, 107, 0.28);
+
+  /* ── Abyss Backgrounds (9 shades of depth) ── */
+  --bg-base:        #07080D;   /* body */
+  --bg-primary:     #0C0E16;   /* page */
+  --bg-secondary:   #111520;   /* sidebar / topbar */
+  --bg-card:        #181D2B;   /* cards */
+  --bg-hover:       #1E2435;   /* hover */
+  --bg-elevated:    #232940;   /* modals */
+  --bg-input:       #141826;   /* form inputs */
+
+  /* ── Text ── */
+  --text-primary:   #F0F4FF;   /* clean blue-white */
+  --text-secondary: #8892AA;   /* muted */
+  --text-muted:     #4B5370;   /* very muted */
+
+  /* ── Borders ── */
+  --border-color:   rgba(61, 142, 248, 0.10);
+  --border-subtle:  rgba(255, 255, 255, 0.05);
+  --border-hover:   rgba(61, 142, 248, 0.25);
+  --border-active:  rgba(61, 142, 248, 0.45);
+
+  /* ── Status (Color Psychology for Productivity) ── */
+  --c-todo:         #3B82F6;   /* Blue: Focus and clear direction */
+  --c-progress:     #8B5CF6;   /* Purple: Flow, creativity, and momentum */
+  --c-review:       #F59E0B;   /* Amber: Requires attention and energy */
+  --c-done:         #10B981;   /* Emerald Green: Success, dopamine, and completion */
+
+  /* ── Priority ── */
+  --c-low:          #34D399;
+  --c-medium:       #FBBF24;
+  --c-high:         var(--accent);
+  --c-urgent:       #FF3B3B;
+
+  /* ── Glassmorphism ── */
+  --glass-bg:     rgba(17, 21, 32, 0.82);
+  --glass-border: rgba(61, 142, 248, 0.07);
+}
+
+/* ── Light Theme ──────────────────────────────────────────── */
+body.light-theme {
+  --bg-base:        #FAFAFA;
+  --bg-primary:     #FAFAFA;
+  --bg-secondary:   #FFFFFF;
+  --bg-card:        #FFFFFF;
+  --bg-hover:       #F4F4F5;
+  --bg-elevated:    #FFFFFF;
+  --bg-input:       #FFFFFF;
+  --text-primary:   #0E1525;
+  --text-secondary: #4B5570;
+  --text-muted:     #9AA3BA;
+  --border-color:   rgba(61,142,248,0.15);
+  --border-subtle:  rgba(0,0,0,0.07);
+  --border-hover:   rgba(61,142,248,0.35);
+  --border-active:  rgba(61,142,248,0.5);
+  --primary-soft:   rgba(61,142,248,0.08);
+  --primary-mid:    rgba(61,142,248,0.14);
+  background-image:
+    radial-gradient(ellipse at 0% 50%, rgba(61,142,248,0.05) 0px, transparent 55%),
+    radial-gradient(ellipse at 100% 20%, rgba(255,107,107,0.04) 0px, transparent 50%);
+}
+
+/* ── Reset ────────────────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Subtle aurora glow — electric blue left, coral right */
+  background-image:
+    radial-gradient(ellipse at 0% 50%,   rgba(61, 142, 248, 0.07) 0px, transparent 55%),
+    radial-gradient(ellipse at 100% 20%,  rgba(255, 107, 107, 0.06) 0px, transparent 50%),
+    radial-gradient(ellipse at 50%  100%, rgba(61, 142, 248, 0.04) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* ── Glass Panel ──────────────────────────────────────────── */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  border-radius: 20px;
+}
+
+/* ── Primary Button ───────────────────────────────────────── */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  border: none;
+  padding: 0.78rem 1.5rem;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-shadow: 0 4px 18px var(--primary-glow);
+  letter-spacing: 0.01em;
+}
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-deeper));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(61,142,248,0.42);
+}
+.btn-primary:active:not(:disabled)  { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(61,142,248,0.22); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(61,142,248,0.4); }

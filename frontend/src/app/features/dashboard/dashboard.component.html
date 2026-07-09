@@ -1,0 +1,591 @@
+<div class="dashboard-layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span>SmartTask<span class="pro">Pro</span></span>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li [class.active]="activeNav === 'dashboard'" (click)="activeNav='dashboard'">
+        <span class="nav-icon">🏠</span> Dashboard
+      </li>
+      <li [class.active]="activeNav === 'tasks'" (click)="activeNav='tasks'">
+        <span class="nav-icon">✅</span> My Tasks
+        <span class="badge" *ngIf="stats.todo > 0">{{ stats.todo }}</span>
+      </li>
+      <li [class.active]="activeNav === 'kanban'" (click)="activeNav='kanban'">
+        <span class="nav-icon">🗂️</span> Task Flow
+      </li>
+      <li [class.active]="activeNav === 'analytics'" (click)="activeNav='analytics'">
+        <span class="nav-icon">📊</span> Analytics
+      </li>
+    </ul>
+
+    <!-- POMODORO WIDGET -->
+    <div class="pomodoro-widget">
+      <div class="pomodoro-header">
+        <span class="pomodoro-title">🍅 Focus Timer</span>
+        <span class="pomodoro-label-badge">{{ pomodoroLabel }}</span>
+      </div>
+
+      <div class="pomodoro-ring-wrap">
+        <svg class="pomodoro-ring" viewBox="0 0 80 80">
+          <circle class="ring-bg" cx="40" cy="40" r="32"/>
+          <circle class="ring-fill"
+            cx="40" cy="40" r="32"
+            [style.strokeDashoffset]="201 - (201 * pomodoroProgress / 100)"
+            [class.ring-complete]="pomodoroProgress >= 100"/>
+        </svg>
+        <div class="pomodoro-time">
+          {{ pomodoroMinutes | number:'2.0-0' }}:{{ pomodoroSeconds | number:'2.0-0' }}
+        </div>
+      </div>
+
+      <div class="pomodoro-presets" *ngIf="!pomodoroActive">
+        <button class="preset-btn" (click)="startPomodoro(25, 'Focus')">25m</button>
+        <button class="preset-btn" (click)="startPomodoro(15, 'Work')">15m</button>
+        <button class="preset-btn preset-break" (click)="startPomodoro(5, 'Break')">5m</button>
+      </div>
+
+      <div class="pomodoro-controls" *ngIf="pomodoroActive">
+        <button class="pomo-btn" (click)="pauseResumePomodoro()">
+          {{ isPomodoroRunning ? '⏸ Pause' : '▶ Resume' }}
+        </button>
+        <button class="pomo-btn pomo-reset" (click)="resetPomodoro()">✕</button>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="avatar-sm">{{ userInitial }}</div>
+        <div class="user-details">
+          <div class="user-name">{{ currentUser }}</div>
+          <div class="user-role">Developer</div>
+        </div>
+        <button class="theme-toggle" (click)="toggleTheme()" [title]="isDarkTheme ? 'Switch to Light' : 'Switch to Dark'">
+          {{ isDarkTheme ? '☀️' : '🌙' }}
+        </button>
+      </div>
+      <button class="btn-logout" (click)="logout()">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1>
+          <ng-container [ngSwitch]="activeNav">
+            <span *ngSwitchCase="'dashboard'">Dashboard</span>
+            <span *ngSwitchCase="'tasks'">My Tasks</span>
+            <span *ngSwitchCase="'kanban'">Task Flow</span>
+            <span *ngSwitchCase="'analytics'">Analytics</span>
+          </ng-container>
+        </h1>
+        <span class="topbar-subtitle">Welcome back, {{ currentUser }} 👋</span>
+      </div>
+      <div class="topbar-right">
+        <!-- Global Search Button -->
+        <button class="search-cmd-btn" (click)="openGlobalSearch()" title="Search (Ctrl+K)">
+          <span class="search-icon-inner">🔍</span>
+          <span class="search-cmd-text">Search tasks…</span>
+          <kbd class="kbd-hint">Ctrl K</kbd>
+        </button>
+
+        <!-- Sort (only on dashboard) -->
+        <select class="sort-select" [(ngModel)]="sortBy" (ngModelChange)="applyFilterAndSearch()" *ngIf="activeNav === 'dashboard'">
+          <option value="default">Sort: Default</option>
+          <option value="priority">Sort: Priority</option>
+          <option value="dueDate">Sort: Due Date</option>
+          <option value="aiScore">Sort: AI Score</option>
+          <option value="title">Sort: Title A-Z</option>
+        </select>
+
+        <button class="btn-new-task" (click)="openModal()">
+          <span>＋</span> New Task
+        </button>
+
+        <!-- Notification Bell -->
+        <div class="notif-wrap">
+          <button class="notif-bell-btn" (click)="toggleNotificationPanel()" [class.has-unread]="unreadCount > 0" title="Notifications">
+            🔔
+            <span class="notif-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+          </button>
+
+          <!-- Backdrop to capture clicks outside -->
+          <div class="notif-backdrop" *ngIf="showNotificationPanel" (click)="closeNotificationPanel()"></div>
+
+          <!-- Notification Dropdown -->
+          <div class="notif-panel" *ngIf="showNotificationPanel" (click)="$event.stopPropagation()">
+            <div class="notif-panel-header">
+              <span class="notif-panel-title">Notifications</span>
+              <button class="notif-mark-all" (click)="markAllNotifsRead()" *ngIf="unreadCount > 0">Mark all read</button>
+            </div>
+            <div class="notif-list">
+              <div *ngFor="let n of notifications"
+                   class="notif-item"
+                   [class.notif-unread]="!n.read"
+                   (click)="markNotifRead(n.id)">
+                <span class="notif-type-icon">{{ getNotifIcon(n.type) }}</span>
+                <div class="notif-content">
+                  <div class="notif-title">{{ n.title }}</div>
+                  <div class="notif-desc" *ngIf="n.description">{{ n.description }}</div>
+                  <div class="notif-time">{{ getRelativeTime(n.timestamp) }}</div>
+                </div>
+                <span class="notif-dot" *ngIf="!n.read"></span>
+              </div>
+              <div class="notif-empty" *ngIf="notifications.length === 0">No notifications</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="avatar" (click)="toggleNotificationPanel()">{{ userInitial }}</div>
+      </div>
+    </header>
+
+    <div class="content-area">
+
+      <!-- LOADING SKELETON -->
+      <div *ngIf="isLoading">
+        <app-skeleton
+          [count]="6"
+          [type]="activeNav === 'kanban' ? 'board' : activeNav === 'tasks' ? 'row' : 'card'">
+        </app-skeleton>
+      </div>
+
+      <!-- ═══════════════ DASHBOARD VIEW ═══════════════ -->
+      <ng-container *ngIf="!isLoading && activeNav === 'dashboard'">
+
+        <!-- STATS + PROGRESS -->
+        <div class="stats-row">
+          <div class="stat-card stat-total">
+            <div class="stat-value">{{ stats.total }}</div>
+            <div class="stat-label">Total Tasks</div>
+            <div class="stat-icon">📋</div>
+          </div>
+          <div class="stat-card stat-todo">
+            <div class="stat-value">{{ stats.todo }}</div>
+            <div class="stat-label">To Do</div>
+            <div class="stat-icon">📌</div>
+          </div>
+          <div class="stat-card stat-progress">
+            <div class="stat-value">{{ stats.inProgress }}</div>
+            <div class="stat-label">In Progress</div>
+            <div class="stat-icon">⚙️</div>
+          </div>
+          <div class="stat-card stat-done">
+            <div class="stat-value">{{ stats.done }}</div>
+            <div class="stat-label">Done</div>
+            <div class="stat-icon">✅</div>
+          </div>
+          <div class="stat-card stat-overdue" *ngIf="stats.overdue > 0">
+            <div class="stat-value">{{ stats.overdue }}</div>
+            <div class="stat-label">Overdue</div>
+            <div class="stat-icon">⚠️</div>
+          </div>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="progress-section">
+          <div class="progress-header">
+            <span class="progress-label">Overall Completion</span>
+            <span class="progress-pct">{{ completionPercent }}%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="completionPercent"></div>
+          </div>
+        </div>
+
+        <!-- FILTER TABS -->
+        <div class="filter-bar">
+          <button class="filter-btn" [class.active]="activeFilter === 'ALL'" (click)="applyFilter('ALL')">All</button>
+          <button class="filter-btn" [class.active]="activeFilter === 'TODO'" (click)="applyFilter('TODO')">To Do</button>
+          <button class="filter-btn" [class.active]="activeFilter === 'IN_PROGRESS'" (click)="applyFilter('IN_PROGRESS')">In Progress</button>
+          <button class="filter-btn" [class.active]="activeFilter === 'IN_REVIEW'" (click)="applyFilter('IN_REVIEW')">In Review</button>
+          <button class="filter-btn" [class.active]="activeFilter === 'DONE'" (click)="applyFilter('DONE')">Done</button>
+          <button class="filter-btn filter-btn-overdue" [class.active]="activeFilter === 'OVERDUE'" (click)="applyFilter('OVERDUE')" *ngIf="stats.overdue > 0">
+            ⚠️ Overdue ({{ stats.overdue }})
+          </button>
+        </div>
+
+        <!-- EMPTY -->
+        <div *ngIf="filteredTasks.length === 0" class="empty-state">
+          <div class="empty-icon">{{ searchQuery ? '🔎' : '📝' }}</div>
+          <h3>{{ searchQuery ? 'No results found' : 'No tasks here' }}</h3>
+          <p>{{ searchQuery ? 'Try a different search term.' : 'Create your first task to get started.' }}</p>
+          <button class="btn-new-task" (click)="openModal()" *ngIf="!searchQuery">＋ Create Task</button>
+        </div>
+
+        <!-- TASK GRID -->
+        <div *ngIf="filteredTasks.length > 0" class="task-grid">
+          <ng-container *ngTemplateOutlet="taskCardTpl; context: { tasks: filteredTasks }"></ng-container>
+        </div>
+
+      </ng-container>
+
+      <!-- ═══════════════ MY TASKS VIEW ═══════════════ -->
+      <ng-container *ngIf="!isLoading && activeNav === 'tasks'">
+
+        <div class="my-tasks-header">
+          <h2 class="section-heading">📋 My Tasks</h2>
+          <button class="btn-new-task" (click)="openModal()">＋ New Task</button>
+        </div>
+
+        <!-- TODAY -->
+        <div class="task-group">
+          <div class="task-group-header">
+            <div class="group-title-row">
+              <span class="group-icon today-icon">☀️</span>
+              <span class="group-title">Today</span>
+              <span class="group-badge">{{ todayTasks.length }}</span>
+            </div>
+            <span class="group-sub">Due today, {{ '' | date:'EEEE, MMM d' }}</span>
+          </div>
+          <div class="task-list" *ngIf="todayTasks.length > 0">
+            <ng-container *ngTemplateOutlet="taskRowTpl; context: { tasks: todayTasks }"></ng-container>
+          </div>
+          <div class="group-empty" *ngIf="todayTasks.length === 0">No tasks due today 🎉</div>
+        </div>
+
+        <!-- THIS WEEK -->
+        <div class="task-group">
+          <div class="task-group-header">
+            <div class="group-title-row">
+              <span class="group-icon week-icon">📅</span>
+              <span class="group-title">This Week</span>
+              <span class="group-badge week-badge">{{ weeklyTasks.length }}</span>
+            </div>
+            <span class="group-sub">Next 6 days</span>
+          </div>
+          <div class="task-list" *ngIf="weeklyTasks.length > 0">
+            <ng-container *ngTemplateOutlet="taskRowTpl; context: { tasks: weeklyTasks }"></ng-container>
+          </div>
+          <div class="group-empty" *ngIf="weeklyTasks.length === 0">No tasks this week 🙌</div>
+        </div>
+
+        <!-- THIS MONTH -->
+        <div class="task-group">
+          <div class="task-group-header">
+            <div class="group-title-row">
+              <span class="group-icon month-icon">🗓️</span>
+              <span class="group-title">This Month</span>
+              <span class="group-badge month-badge">{{ monthlyTasks.length }}</span>
+            </div>
+            <span class="group-sub">Next 7–30 days</span>
+          </div>
+          <div class="task-list" *ngIf="monthlyTasks.length > 0">
+            <ng-container *ngTemplateOutlet="taskRowTpl; context: { tasks: monthlyTasks }"></ng-container>
+          </div>
+          <div class="group-empty" *ngIf="monthlyTasks.length === 0">No tasks this month</div>
+        </div>
+
+        <!-- NO DUE DATE -->
+        <div class="task-group" *ngIf="noDueDateTasks.length > 0">
+          <div class="task-group-header">
+            <div class="group-title-row">
+              <span class="group-icon nodate-icon">📌</span>
+              <span class="group-title">No Due Date</span>
+              <span class="group-badge nodate-badge">{{ noDueDateTasks.length }}</span>
+            </div>
+            <span class="group-sub">Unscheduled tasks</span>
+          </div>
+          <div class="task-list">
+            <ng-container *ngTemplateOutlet="taskRowTpl; context: { tasks: noDueDateTasks }"></ng-container>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <!-- ═══════════════ KANBAN VIEW ═══════════════ -->
+      <ng-container *ngIf="!isLoading && activeNav === 'kanban'">
+        <app-kanban
+          [tasks]="tasks"
+          (taskUpdated)="onKanbanTaskUpdated()"
+          (editTask)="onKanbanEditTask($event)"
+          (deleteTask)="onKanbanDeleteTask($event)"
+          (openCreateModal)="onKanbanOpenCreate($event)">
+        </app-kanban>
+      </ng-container>
+
+      <!-- ═══════════════ ANALYTICS VIEW ═══════════════ -->
+      <ng-container *ngIf="!isLoading && activeNav === 'analytics'">
+        <app-analytics
+          [tasks]="tasks"
+          [activities]="activities">
+        </app-analytics>
+      </ng-container>
+
+    </div>
+
+    <!-- ── REUSABLE TASK CARD TEMPLATE ── -->
+    <ng-template #taskCardTpl let-tasks="tasks">
+      <div *ngFor="let task of tasks"
+        class="task-card"
+        [class.done-card]="task.status === 'DONE'"
+        [class.overdue-card]="isOverdue(task)">
+
+        <div class="task-card-top">
+          <span class="category-tag">{{ task.category || 'General' }}</span>
+          <div class="task-card-badges">
+            <span class="overdue-badge" *ngIf="isOverdue(task)">Overdue</span>
+            <span class="priority-dot" [class]="'priority-' + task.priority.toLowerCase()"></span>
+          </div>
+        </div>
+
+        <h3 class="task-title" [class.done-title]="task.status === 'DONE'">{{ task.title }}</h3>
+        <p class="task-desc">{{ task.description }}</p>
+
+        <!-- Labels -->
+        <div class="task-labels" *ngIf="task.labels && task.labels.length > 0">
+          <span class="label-chip" *ngFor="let label of task.labels">{{ label }}</span>
+        </div>
+
+        <!-- Subtasks progress -->
+        <div class="subtask-progress-row" *ngIf="task.subtasks && task.subtasks.length > 0">
+          <span class="subtask-icon">☑</span>
+          <div class="subtask-bar-wrap">
+            <div class="subtask-bar-fill"
+              [style.width.%]="(task.subtasks.filter(s => s.done).length / task.subtasks.length) * 100">
+            </div>
+          </div>
+          <span class="subtask-count-text">{{ task.subtasks.filter(s => s.done).length }}/{{ task.subtasks.length }}</span>
+        </div>
+
+        <div class="task-meta">
+          <span class="status-pill status-clickable" [class]="'status-' + task.status.toLowerCase()" (click)="cycleStatus(task, $event)" title="Click to advance status">
+            {{ task.status.replace('_', ' ') }} ›
+          </span>
+          <span class="ai-score" *ngIf="task.aiPriorityScore">🤖 {{ task.aiPriorityScore }}</span>
+        </div>
+
+        <div class="task-footer">
+          <span class="due-date" *ngIf="task.dueDate" [class.due-overdue]="isOverdue(task)">
+            📅 {{ getDaysRemaining(task.dueDate) }}
+          </span>
+          <div class="task-actions">
+            <button class="action-btn edit-btn" (click)="openEditModal(task, $event)" title="Edit">✏️</button>
+            <button class="action-btn done-btn" (click)="markDone(task, $event)" [title]="task.status === 'DONE' ? 'Mark as Todo' : 'Mark as Done'">
+              {{ task.status === 'DONE' ? '↩' : '✓' }}
+            </button>
+            <button class="action-btn delete-btn" (click)="deleteTask(task.id, $event)" title="Delete">🗑</button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- ── REUSABLE TASK ROW TEMPLATE ── -->
+    <ng-template #taskRowTpl let-tasks="tasks">
+      <div *ngFor="let task of tasks" class="task-row" [class.task-row-done]="task.status === 'DONE'" [class.task-row-overdue]="isOverdue(task)">
+        <div class="task-row-left">
+          <button class="row-check" (click)="markDone(task, $event)" [class.checked]="task.status === 'DONE'"
+            [title]="task.status === 'DONE' ? 'Mark as Todo' : 'Mark Done'">✓</button>
+          <div class="task-row-info">
+            <span class="task-row-title" [class.done-title]="task.status === 'DONE'">{{ task.title }}</span>
+            <span class="task-row-meta">
+              <span class="category-tag sm">{{ task.category || 'General' }}</span>
+              <span class="status-pill" [class]="'status-' + task.status.toLowerCase()">{{ task.status.replace('_',' ') }}</span>
+              <span class="overdue-badge" *ngIf="isOverdue(task)">Overdue</span>
+              <!-- Labels inline -->
+              <ng-container *ngIf="task.labels && task.labels.length > 0">
+                <span class="label-chip sm" *ngFor="let label of task.labels.slice(0,2)">{{ label }}</span>
+              </ng-container>
+            </span>
+          </div>
+        </div>
+        <div class="task-row-right">
+          <span class="priority-dot" [class]="'priority-' + task.priority.toLowerCase()" [title]="task.priority"></span>
+          <span class="ai-score" *ngIf="task.aiPriorityScore">🤖 {{ task.aiPriorityScore }}</span>
+          <span class="due-date" *ngIf="task.dueDate" [class.due-overdue]="isOverdue(task)">📅 {{ getDaysRemaining(task.dueDate) }}</span>
+          <button class="action-btn edit-btn" (click)="openEditModal(task, $event)" title="Edit">✏️</button>
+          <button class="action-btn delete-btn" (click)="deleteTask(task.id, $event)" title="Delete">🗑</button>
+        </div>
+      </div>
+    </ng-template>
+  </main>
+</div>
+
+<!-- GLOBAL SEARCH MODAL -->
+<app-global-search
+  *ngIf="showGlobalSearch"
+  [tasks]="tasks"
+  (selectTask)="onSearchSelectTask($event)"
+  (close)="closeGlobalSearch()">
+</app-global-search>
+
+<!-- CREATE TASK MODAL -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>✨ Create New Task</h2>
+      <button class="modal-close" (click)="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Title *</label>
+        <input [(ngModel)]="newTask.title" placeholder="What needs to be done?" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="newTask.description" placeholder="Add more details..." class="form-input" rows="3"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Priority</label>
+          <select [(ngModel)]="newTask.priority" class="form-input">
+            <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="newTask.status" class="form-input">
+            <option *ngFor="let s of statuses" [value]="s">{{ s.replace('_',' ') }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <input [(ngModel)]="newTask.category" placeholder="e.g. Design, Dev..." class="form-input" />
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" [(ngModel)]="newTask.dueDate" class="form-input" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Est. Hours</label>
+        <input type="number" [(ngModel)]="newTask.estimatedHours" placeholder="0" class="form-input" />
+      </div>
+
+      <!-- Labels -->
+      <div class="form-group">
+        <label>Labels</label>
+        <div class="label-input-row">
+          <input [(ngModel)]="newLabelInput" placeholder="Add label..." class="form-input label-input"
+            (keydown.enter)="addNewLabel()" />
+          <button class="btn-add-inline" (click)="addNewLabel()" type="button">＋ Add</button>
+        </div>
+        <div class="label-chips-row" *ngIf="newTask.labels.length > 0">
+          <span class="label-chip editable" *ngFor="let label of newTask.labels">
+            {{ label }}
+            <button class="chip-remove" (click)="removeNewLabel(label)">✕</button>
+          </span>
+        </div>
+      </div>
+
+      <!-- Subtasks -->
+      <div class="form-group">
+        <label>Subtasks</label>
+        <div class="label-input-row">
+          <input [(ngModel)]="newSubtaskInput" placeholder="Add subtask..." class="form-input label-input"
+            (keydown.enter)="addNewSubtask()" />
+          <button class="btn-add-inline" (click)="addNewSubtask()" type="button">＋ Add</button>
+        </div>
+        <div class="subtask-list-edit" *ngIf="newTask.subtasks.length > 0">
+          <div class="subtask-edit-item" *ngFor="let sub of newTask.subtasks">
+            <span class="subtask-check-icon">☐</span>
+            <span class="subtask-edit-title">{{ sub.title }}</span>
+            <button class="chip-remove" (click)="removeNewSubtask(sub.id)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+      <button class="btn-create" (click)="createTask()" [disabled]="!newTask.title.trim()">Create Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TASK MODAL -->
+<div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>✏️ Edit Task</h2>
+      <button class="modal-close" (click)="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Title *</label>
+        <input [(ngModel)]="editTask.title" placeholder="Task title" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="editTask.description" placeholder="Details..." class="form-input" rows="3"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Priority</label>
+          <select [(ngModel)]="editTask.priority" class="form-input">
+            <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="editTask.status" class="form-input">
+            <option *ngFor="let s of statuses" [value]="s">{{ s.replace('_',' ') }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <input [(ngModel)]="editTask.category" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" [(ngModel)]="editTask.dueDate" class="form-input" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Est. Hours</label>
+        <input type="number" [(ngModel)]="editTask.estimatedHours" class="form-input" />
+      </div>
+
+      <!-- Labels -->
+      <div class="form-group">
+        <label>Labels</label>
+        <div class="label-input-row">
+          <input [(ngModel)]="editLabelInput" placeholder="Add label..." class="form-input label-input"
+            (keydown.enter)="addEditLabel()" />
+          <button class="btn-add-inline" (click)="addEditLabel()" type="button">＋ Add</button>
+        </div>
+        <div class="label-chips-row" *ngIf="editTask.labels.length > 0">
+          <span class="label-chip editable" *ngFor="let label of editTask.labels">
+            {{ label }}
+            <button class="chip-remove" (click)="removeEditLabel(label)">✕</button>
+          </span>
+        </div>
+      </div>
+
+      <!-- Subtasks -->
+      <div class="form-group">
+        <label>Subtasks</label>
+        <div class="label-input-row">
+          <input [(ngModel)]="editSubtaskInput" placeholder="Add subtask..." class="form-input label-input"
+            (keydown.enter)="addEditSubtask()" />
+          <button class="btn-add-inline" (click)="addEditSubtask()" type="button">＋ Add</button>
+        </div>
+        <div class="subtask-list-edit" *ngIf="editTask.subtasks.length > 0">
+          <div class="subtask-edit-item" *ngFor="let sub of editTask.subtasks">
+            <button class="subtask-toggle-btn" [class.done-sub]="sub.done" (click)="toggleEditSubtask(sub.id)">
+              {{ sub.done ? '☑' : '☐' }}
+            </button>
+            <span class="subtask-edit-title" [class.done-sub-text]="sub.done">{{ sub.title }}</span>
+            <button class="chip-remove" (click)="removeEditSubtask(sub.id)">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeEditModal()">Cancel</button>
+      <button class="btn-create" (click)="saveEdit()" [disabled]="!editTask.title.trim()">Save Changes</button>
+    </div>
+  </div>
+</div>

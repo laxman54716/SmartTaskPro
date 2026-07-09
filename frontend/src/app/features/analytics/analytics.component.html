@@ -1,0 +1,180 @@
+<div class="analytics-dashboard">
+  <!-- STATS GRID -->
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-icon">📋</div>
+      <div class="stat-details">
+        <span class="stat-label">Total Tasks</span>
+        <h3 class="stat-value">{{ stats.total }}</h3>
+      </div>
+    </div>
+    <div class="stat-card completed">
+      <div class="stat-icon">✅</div>
+      <div class="stat-details">
+        <span class="stat-label">Completed</span>
+        <h3 class="stat-value">{{ stats.completed }}</h3>
+      </div>
+    </div>
+    <div class="stat-card pending">
+      <div class="stat-icon">⌛</div>
+      <div class="stat-details">
+        <span class="stat-label">Pending</span>
+        <h3 class="stat-value">{{ stats.pending }}</h3>
+      </div>
+    </div>
+    <div class="stat-card overdue">
+      <div class="stat-icon">⚠️</div>
+      <div class="stat-details">
+        <span class="stat-label">Overdue</span>
+        <h3 class="stat-value">{{ stats.overdue }}</h3>
+      </div>
+    </div>
+    <div class="stat-card today">
+      <div class="stat-icon">☀️</div>
+      <div class="stat-details">
+        <span class="stat-label">Due Today</span>
+        <h3 class="stat-value">{{ stats.today }}</h3>
+      </div>
+    </div>
+    <div class="stat-card completion-rate">
+      <div class="stat-icon">📈</div>
+      <div class="stat-details">
+        <span class="stat-label">Completion Rate</span>
+        <h3 class="stat-value">{{ stats.completionRate }}%</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="charts-row">
+    <!-- Bar Chart SVG -->
+    <div class="chart-card bar-chart-card">
+      <h4>Tasks Created vs Completed (Last 7 Days)</h4>
+      <div class="chart-container">
+        <svg viewBox="0 0 400 180" class="svg-chart">
+          <!-- Grid lines -->
+          <line x1="40" y1="20" x2="380" y2="20" stroke="rgba(255,255,255,0.05)" />
+          <line x1="40" y1="60" x2="380" y2="60" stroke="rgba(255,255,255,0.05)" />
+          <line x1="40" y1="100" x2="380" y2="100" stroke="rgba(255,255,255,0.05)" />
+          <line x1="40" y1="140" x2="380" y2="140" stroke="rgba(255,255,255,0.1)" />
+
+          <!-- X axis labels -->
+          <g *ngFor="let day of barChartDays; let i = index">
+            <!-- Group offset: 40 + i * 48 -->
+            <text [attr.x]="64 + i * 48" y="160" class="chart-axis-text" text-anchor="middle">{{ day.name }}</text>
+            
+            <!-- Created bar (blue) -->
+            <rect [attr.x]="48 + i * 48" [attr.y]="140 - day.createdHeight" width="14" [attr.height]="day.createdHeight" fill="#3b82f6" rx="3" class="chart-bar" />
+            
+            <!-- Completed bar (green) -->
+            <rect [attr.x]="66 + i * 48" [attr.y]="140 - day.completedHeight" width="14" [attr.height]="day.completedHeight" fill="#10b981" rx="3" class="chart-bar" />
+          </g>
+
+          <!-- Legend -->
+          <rect x="260" y="5" width="10" height="10" fill="#3b82f6" rx="2" />
+          <text x="275" y="14" class="legend-text">Created</text>
+          
+          <rect x="330" y="5" width="10" height="10" fill="#10b981" rx="2" />
+          <text x="345" y="14" class="legend-text">Completed</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Donut Chart SVG -->
+    <div class="chart-card donut-chart-card">
+      <h4>Tasks by Priority</h4>
+      <div class="donut-chart-container">
+        <div class="donut-chart-svg-wrap">
+          <svg viewBox="0 0 42 42" class="donut-svg">
+            <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="4.5" />
+            <circle *ngFor="let slice of prioritySlices"
+                    cx="21"
+                    cy="21"
+                    r="15.91549430918954"
+                    fill="transparent"
+                    [attr.stroke]="slice.color"
+                    stroke-width="5"
+                    [attr.stroke-dasharray]="slice.dash"
+                    [attr.stroke-dashoffset]="slice.offset"
+                    class="donut-segment" />
+          </svg>
+          <div class="donut-inner-text">
+            <span class="donut-num">{{ stats.total }}</span>
+            <span class="donut-label">Tasks</span>
+          </div>
+        </div>
+
+        <div class="donut-legend">
+          <div class="legend-item" *ngFor="let slice of prioritySlices">
+            <span class="legend-dot" [style.background-color]="slice.color"></span>
+            <span class="legend-label">{{ slice.label }}</span>
+            <span class="legend-count">{{ slice.count }} ({{ slice.percentage }}%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Line Chart SVG -->
+    <div class="chart-card line-chart-card">
+      <h4>Weekly Productivity Trend</h4>
+      <div class="chart-container">
+        <svg viewBox="0 0 360 180" class="svg-chart">
+          <!-- Grid lines -->
+          <line x1="20" y1="20" x2="340" y2="20" stroke="rgba(255,255,255,0.05)" />
+          <line x1="20" y1="60" x2="340" y2="60" stroke="rgba(255,255,255,0.05)" />
+          <line x1="20" y1="100" x2="340" y2="100" stroke="rgba(255,255,255,0.05)" />
+          <line x1="20" y1="140" x2="340" y2="140" stroke="rgba(255,255,255,0.1)" />
+
+          <!-- Line path -->
+          <polyline fill="none" stroke="#a855f7" stroke-width="3" [attr.points]="productivityPoints" class="trend-polyline" />
+
+          <!-- Data dots & text -->
+          <g *ngFor="let pt of productivityTrend">
+            <circle [attr.cx]="pt.x" [attr.cy]="pt.y" r="5" fill="#a855f7" stroke="#ffffff" stroke-width="1.5" class="trend-dot" />
+            <text [attr.x]="pt.x" [attr.y]="pt.y - 10" class="chart-value-text" text-anchor="middle">{{ pt.value }}</text>
+            <text [attr.x]="pt.x" y="160" class="chart-axis-text" text-anchor="middle">{{ pt.day }}</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM DETAILS ROW -->
+  <div class="details-row">
+    <!-- Category breakdown -->
+    <div class="details-card category-breakdown">
+      <h4>Category Breakdown</h4>
+      <div class="category-list">
+        <div class="category-item" *ngFor="let cat of categoryStats">
+          <div class="cat-info">
+            <span class="cat-name">{{ cat.name }}</span>
+            <span class="cat-progress-text">{{ cat.completed }}/{{ cat.total }} Done</span>
+          </div>
+          <div class="cat-bar-track">
+            <div class="cat-bar-fill" [style.width.%]="cat.percentage" [style.background]="cat.percentage === 100 ? '#10b981' : '#3b82f6'"></div>
+          </div>
+        </div>
+        <div class="empty-detail-state" *ngIf="categoryStats.length === 0">
+          No categories found.
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline Activity Feed -->
+    <div class="details-card activity-feed-card">
+      <h4>Recent Action Timeline</h4>
+      <div class="activity-timeline">
+        <div class="activity-item" *ngFor="let act of processedActivities">
+          <span class="activity-badge" [class]="act.type">{{ act.icon }}</span>
+          <div class="activity-details">
+            <div class="activity-text" [innerHTML]="act.text"></div>
+            <span class="activity-time">{{ act.time | date:'MMM d, h:mm a' }}</span>
+          </div>
+        </div>
+        <div class="empty-detail-state" *ngIf="processedActivities.length === 0">
+          No recent activities. Actions like creating, updating, or deleting tasks will appear here.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

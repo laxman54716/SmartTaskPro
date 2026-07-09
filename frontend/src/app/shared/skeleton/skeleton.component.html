@@ -1,0 +1,53 @@
+<div [class]="'skeleton-container ' + type + '-layout'">
+  <!-- SKELETON CARD -->
+  <ng-container *ngIf="type === 'card'">
+    <div *ngFor="let item of items" class="skeleton-card shimmer">
+      <div class="sk-top">
+        <div class="sk-badge"></div>
+        <div class="sk-dot"></div>
+      </div>
+      <div class="sk-title"></div>
+      <div class="sk-line long"></div>
+      <div class="sk-line"></div>
+      <div class="sk-footer">
+        <div class="sk-meta"></div>
+        <div class="sk-actions"></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- SKELETON ROW -->
+  <ng-container *ngIf="type === 'row'">
+    <div *ngFor="let item of items" class="skeleton-row shimmer">
+      <div class="sk-row-left">
+        <div class="sk-checkbox"></div>
+        <div class="sk-row-info">
+          <div class="sk-row-title"></div>
+          <div class="sk-row-sub"></div>
+        </div>
+      </div>
+      <div class="sk-row-right">
+        <div class="sk-row-badge"></div>
+        <div class="sk-row-badge"></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- SKELETON BOARD -->
+  <ng-container *ngIf="type === 'board'">
+    <div class="skeleton-board-wrap">
+      <div *ngFor="let col of [1, 2, 3, 4, 5]" class="skeleton-column">
+        <div class="sk-col-header shimmer"></div>
+        <div class="sk-col-body">
+          <div *ngFor="let card of [1, 2]" class="skeleton-card shimmer">
+            <div class="sk-title"></div>
+            <div class="sk-line"></div>
+            <div class="sk-footer">
+              <div class="sk-meta"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Frontend</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <div id="error-box" style="color: red; position: absolute; z-index: 9999; background: white; padding: 20px; display: none;"></div>
+  <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+      const box = document.getElementById('error-box');
+      box.style.display = 'block';
+      box.innerHTML += '<p>Error: ' + message + '<br>Source: ' + source + ':' + lineno + '</p>';
+    };
+    window.addEventListener('unhandledrejection', function(event) {
+      const box = document.getElementById('error-box');
+      box.style.display = 'block';
+      box.innerHTML += '<p>Promise Rejection: ' + event.reason + '</p>';
+    });
+  </script>
+  <app-root></app-root>
+</body>
+</html>

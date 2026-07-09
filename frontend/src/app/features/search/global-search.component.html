@@ -1,0 +1,62 @@
+<div class="search-overlay" (click)="onOverlayClick()">
+  <div class="search-modal" (click)="$event.stopPropagation()">
+    <!-- Header Input -->
+    <div class="search-header">
+      <span class="search-icon">🔍</span>
+      <input #searchInput
+             type="text"
+             [(ngModel)]="searchQuery"
+             (ngModelChange)="filterTasks()"
+             placeholder="Search tasks, descriptions, tags..."
+             class="search-input" />
+      <span class="esc-badge">ESC</span>
+    </div>
+
+    <!-- Results Body -->
+    <div class="search-body">
+      <div class="search-section-title" *ngIf="filteredResults.length > 0">
+        {{ searchQuery ? 'Search Results' : 'Recent Tasks' }}
+      </div>
+
+      <div class="search-results-list" *ngIf="filteredResults.length > 0">
+        <div *ngFor="let task of filteredResults; let i = index"
+             class="search-result-item"
+             [class.selected]="i === selectedIndex"
+             (click)="onSelect(task)"
+             (mouseenter)="selectedIndex = i">
+          
+          <div class="item-main">
+            <span class="item-priority-dot" [class]="'priority-' + task.priority.toLowerCase()"></span>
+            <div class="item-details">
+              <span class="item-title">{{ task.title }}</span>
+              <span class="item-desc" *ngIf="task.description">{{ task.description }}</span>
+            </div>
+          </div>
+
+          <div class="item-meta">
+            <span class="item-category" *ngIf="task.category">{{ task.category }}</span>
+            <span class="item-status" [class]="'status-' + task.status.toLowerCase()">{{ task.status.replace('_',' ') }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-results-state" *ngIf="filteredResults.length === 0">
+        <span class="no-results-icon">🤷</span>
+        <span class="no-results-text">No matching tasks found for "{{ searchQuery }}"</span>
+      </div>
+    </div>
+
+    <!-- Footer Instructions -->
+    <div class="search-footer">
+      <div class="shortcut-tip">
+        <span>↑↓</span> to navigate
+      </div>
+      <div class="shortcut-tip">
+        <span>↵</span> to open
+      </div>
+      <div class="shortcut-tip">
+        <span>ESC</span> to close
+      </div>
+    </div>
+  </div>
+</div>
