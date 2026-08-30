@@ -159,8 +159,15 @@
         </app-skeleton>
       </div>
 
+      <!-- ERROR STATE -->
+      <div *ngIf="!isLoading && loadError" class="load-error-banner">
+        <span>⚠️ Could not load tasks. Please check your connection.</span>
+        <button class="btn-retry" (click)="loadTasks()">Retry</button>
+      </div>
+
       <!-- ═══════════════ DASHBOARD VIEW ═══════════════ -->
-      <ng-container *ngIf="!isLoading && activeNav === 'dashboard'">
+      <ng-container *ngIf="!isLoading && !loadError && activeNav === 'dashboard'">
+
 
         <!-- STATS + PROGRESS -->
         <div class="stats-row">
@@ -207,8 +214,8 @@
           <button class="filter-btn" [class.active]="activeFilter === 'ALL'" (click)="applyFilter('ALL')">All</button>
           <button class="filter-btn" [class.active]="activeFilter === 'TODO'" (click)="applyFilter('TODO')">To Do</button>
           <button class="filter-btn" [class.active]="activeFilter === 'IN_PROGRESS'" (click)="applyFilter('IN_PROGRESS')">In Progress</button>
-          <button class="filter-btn" [class.active]="activeFilter === 'IN_REVIEW'" (click)="applyFilter('IN_REVIEW')">In Review</button>
-          <button class="filter-btn" [class.active]="activeFilter === 'DONE'" (click)="applyFilter('DONE')">Done</button>
+          <button class="filter-btn" [class.active]="activeFilter === 'REVIEW'" (click)="applyFilter('REVIEW')">In Review</button>
+          <button class="filter-btn" [class.active]="activeFilter === 'COMPLETED'" (click)="applyFilter('COMPLETED')">Done</button>
           <button class="filter-btn filter-btn-overdue" [class.active]="activeFilter === 'OVERDUE'" (click)="applyFilter('OVERDUE')" *ngIf="stats.overdue > 0">
             ⚠️ Overdue ({{ stats.overdue }})
           </button>
@@ -327,7 +334,7 @@
     <ng-template #taskCardTpl let-tasks="tasks">
       <div *ngFor="let task of tasks"
         class="task-card"
-        [class.done-card]="task.status === 'DONE'"
+        [class.done-card]="task.status === 'COMPLETED'"
         [class.overdue-card]="isOverdue(task)">
 
         <div class="task-card-top">
@@ -338,7 +345,7 @@
           </div>
         </div>
 
-        <h3 class="task-title" [class.done-title]="task.status === 'DONE'">{{ task.title }}</h3>
+        <h3 class="task-title" [class.done-title]="task.status === 'COMPLETED'">{{ task.title }}</h3>
         <p class="task-desc">{{ task.description }}</p>
 
         <!-- Labels -->
@@ -370,8 +377,8 @@
           </span>
           <div class="task-actions">
             <button class="action-btn edit-btn" (click)="openEditModal(task, $event)" title="Edit">✏️</button>
-            <button class="action-btn done-btn" (click)="markDone(task, $event)" [title]="task.status === 'DONE' ? 'Mark as Todo' : 'Mark as Done'">
-              {{ task.status === 'DONE' ? '↩' : '✓' }}
+            <button class="action-btn done-btn" (click)="markDone(task, $event)" [title]="task.status === 'COMPLETED' ? 'Mark as Todo' : 'Mark as Done'">
+              {{ task.status === 'COMPLETED' ? '↩' : '✓' }}
             </button>
             <button class="action-btn delete-btn" (click)="deleteTask(task.id, $event)" title="Delete">🗑</button>
           </div>
@@ -381,12 +388,12 @@
 
     <!-- ── REUSABLE TASK ROW TEMPLATE ── -->
     <ng-template #taskRowTpl let-tasks="tasks">
-      <div *ngFor="let task of tasks" class="task-row" [class.task-row-done]="task.status === 'DONE'" [class.task-row-overdue]="isOverdue(task)">
+      <div *ngFor="let task of tasks" class="task-row" [class.task-row-done]="task.status === 'COMPLETED'" [class.task-row-overdue]="isOverdue(task)">
         <div class="task-row-left">
-          <button class="row-check" (click)="markDone(task, $event)" [class.checked]="task.status === 'DONE'"
-            [title]="task.status === 'DONE' ? 'Mark as Todo' : 'Mark Done'">✓</button>
+          <button class="row-check" (click)="markDone(task, $event)" [class.checked]="task.status === 'COMPLETED'"
+            [title]="task.status === 'COMPLETED' ? 'Mark as Todo' : 'Mark Done'">✓</button>
           <div class="task-row-info">
-            <span class="task-row-title" [class.done-title]="task.status === 'DONE'">{{ task.title }}</span>
+            <span class="task-row-title" [class.done-title]="task.status === 'COMPLETED'">{{ task.title }}</span>
             <span class="task-row-meta">
               <span class="category-tag sm">{{ task.category || 'General' }}</span>
               <span class="status-pill" [class]="'status-' + task.status.toLowerCase()">{{ task.status.replace('_',' ') }}</span>

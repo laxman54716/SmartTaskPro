@@ -61,7 +61,7 @@ export class AnalyticsComponent implements OnInit {
     if (!this.tasks) return;
 
     const total = this.tasks.length;
-    const completed = this.tasks.filter(t => t.status === TaskStatus.DONE).length;
+    const completed = this.tasks.filter(t => t.status === TaskStatus.COMPLETED).length;
     const pending = total - completed;
     
     const todayStr = new Date().toDateString();
@@ -71,7 +71,7 @@ export class AnalyticsComponent implements OnInit {
     }).length;
 
     const overdue = this.tasks.filter(t => {
-      if (!t.dueDate || t.status === TaskStatus.DONE) return false;
+      if (!t.dueDate || t.status === TaskStatus.COMPLETED) return false;
       return new Date(t.dueDate) < new Date(todayStr);
     }).length;
 
@@ -99,7 +99,7 @@ export class AnalyticsComponent implements OnInit {
       const cat = t.category || 'General';
       const current = categoriesMap.get(cat) || { total: 0, completed: 0 };
       current.total++;
-      if (t.status === TaskStatus.DONE) {
+      if (t.status === TaskStatus.COMPLETED) {
         current.completed++;
       }
       categoriesMap.set(cat, current);
@@ -167,7 +167,7 @@ export class AnalyticsComponent implements OnInit {
       }).length;
 
       const completed = this.tasks.filter(t => {
-        return t.status === TaskStatus.DONE && t.dueDate && new Date(t.dueDate).toDateString() === dayDateStr;
+        return t.status === TaskStatus.COMPLETED && t.dueDate && new Date(t.dueDate).toDateString() === dayDateStr;
       }).length;
 
       days.push({

@@ -23,8 +23,8 @@ export class KanbanComponent implements OnInit {
     { key: TaskStatus.BACKLOG, label: 'Backlog', icon: '📥', color: '#64748B' }, // Slate: Neutral, out of mind
     { key: TaskStatus.TODO, label: 'To Do', icon: '📌', color: '#3B82F6' }, // Blue: Focus, direction
     { key: TaskStatus.IN_PROGRESS, label: 'In Progress', icon: '⚙️', color: '#8B5CF6' }, // Purple: Flow, creativity
-    { key: TaskStatus.IN_REVIEW, label: 'In Review', icon: '👀', color: '#F59E0B' }, // Amber: Needs attention
-    { key: TaskStatus.DONE, label: 'Done', icon: '✅', color: '#10B981' } // Green: Success, dopamine
+    { key: TaskStatus.REVIEW, label: 'In Review', icon: '👀', color: '#F59E0B' }, // Amber: Needs attention
+    { key: TaskStatus.COMPLETED, label: 'Done', icon: '✅', color: '#10B981' } // Green: Success, dopamine
   ];
 
   draggedTaskId: number | null = null;
@@ -97,7 +97,7 @@ export class KanbanComponent implements OnInit {
   }
 
   isOverdue(task: TaskResponse): boolean {
-    if (!task.dueDate || task.status === TaskStatus.DONE) return false;
+    if (!task.dueDate || task.status === TaskStatus.COMPLETED) return false;
     return new Date(task.dueDate) < new Date(new Date().toDateString());
   }
 

@@ -59,6 +59,33 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+
+    try {
+      // Decode JWT payload (base64url middle segment) to check expiry
+      const payloadBase64 = token.split('.')[1];
+      if (!payloadBase64) {
+        this.clearSession();
+        return false;
+      }
+      const payload = JSON.parse(atob(payloadBase64.replace(/-/g, '+').replace(/_/g, '/')));
+      const now = Math.floor(Date.now() / 1000);
+      if (payload.exp && payload.exp < now) {
+        // Token expired — clear it so the user is prompted to log in again
+        this.clearSession();
+        return false;
+      }
+      return true;
+    } catch {
+      // Malformed token
+      this.clearSession();
+      return false;
+    }
+  }
+
+  private clearSession(): void {
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('current_user');
   }
 }

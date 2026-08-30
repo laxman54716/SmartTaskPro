@@ -2,15 +2,16 @@ export enum TaskPriority {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
-  URGENT = 'URGENT'
+  CRITICAL = 'CRITICAL'
 }
 
 export enum TaskStatus {
   BACKLOG = 'BACKLOG',
   TODO = 'TODO',
   IN_PROGRESS = 'IN_PROGRESS',
-  IN_REVIEW = 'IN_REVIEW',
-  DONE = 'DONE'
+  BLOCKED = 'BLOCKED',
+  REVIEW = 'REVIEW',
+  COMPLETED = 'COMPLETED'
 }
 
 export interface Subtask {
@@ -25,10 +26,10 @@ export interface TaskRequest {
   priority?: TaskPriority;
   status?: TaskStatus;
   category?: string;
-  dueDate?: string; // ISO 8601 string
+  dueDate?: string; // ISO 8601 string or yyyy-MM-dd
   estimatedHours?: number;
   tags?: string;
-  projectId: number;
+  projectId?: number;
   assigneeId?: number;
   labels?: string[];
   subtasks?: Subtask[];

@@ -2,7 +2,6 @@ package com.smarttask.pro.security;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,22 +16,48 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {
 
-    private final Map<String, Bucket> cache = new ConcurrentHashMap<>();
+    @Value("${app.rate-limit.auth-limit:5}")
+    private int authLimit;
 
-    private Bucket createNewBucket() {
-        Bandwidth limit = Bandwidth.classic(50, Refill.greedy(50, Duration.ofMinutes(1)));
-        return Bucket4j.builder().addLimit(limit).build();
+    @Value("${app.rate-limit.api-limit:50}")
+    private int apiLimit;
+
+    private final Map<String, Bucket> authCache = new ConcurrentHashMap<>();
+    private final Map<String, Bucket> apiCache = new ConcurrentHashMap<>();
+
+    private Bucket createAuthBucket() {
+        Bandwidth limit = Bandwidth.classic(authLimit, Refill.greedy(authLimit, Duration.ofMinutes(1)));
+        return Bucket.builder().addLimit(limit).build();
+    }
+
+    private Bucket createApiBucket() {
+        Bandwidth limit = Bandwidth.classic(apiLimit, Refill.greedy(apiLimit, Duration.ofMinutes(1)));
+        return Bucket.builder().addLimit(limit).build();
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
-        String ip = request.getRemoteAddr();
-        Bucket bucket = cache.computeIfAbsent(ip, k -> createNewBucket());
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String path = request.getRequestURI();
+        String ip = getClientIP(request);
+
+        Bucket bucket;
+        if (path != null && path.startsWith("/api/v1/auth/")) {
+            bucket = authCache.computeIfAbsent(ip, k -> createAuthBucket());
+        } else {
+            bucket = apiCache.computeIfAbsent(ip, k -> createApiBucket());
+        }
 
         if (bucket.tryConsume(1)) {
             filterChain.doFilter(request, response);
@@ -40,5 +65,17 @@ public class RateLimitFilter extends OncePerRequestFilter {
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.getWriter().write("Too many requests");
         }
+    }
+
+    public String getClientIP(HttpServletRequest request) {
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
+        String xri = request.getHeader("X-Real-IP");
+        if (xri != null && !xri.isBlank()) {
+            return xri.trim();
+        }
+        return request.getRemoteAddr();
     }
 }

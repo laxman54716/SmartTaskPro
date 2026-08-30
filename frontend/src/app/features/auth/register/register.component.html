@@ -14,10 +14,16 @@
             id="username" 
             name="username" 
             [(ngModel)]="userData.username" 
+            #usernameField="ngModel"
             required 
-            placeholder="Choose a username"
+            minlength="3"
+            placeholder="Choose a username (min 3 characters)"
             autocomplete="username"
           >
+        </div>
+        <div class="field-error" *ngIf="usernameField.invalid && usernameField.touched">
+          <span *ngIf="usernameField.errors?.['required']">Username is required</span>
+          <span *ngIf="usernameField.errors?.['minlength']">Username must be at least 3 characters</span>
         </div>
       </div>
 
@@ -29,10 +35,16 @@
             id="email" 
             name="email" 
             [(ngModel)]="userData.email" 
+            #emailField="ngModel"
             required 
+            email
             placeholder="Enter your email"
             autocomplete="email"
           >
+        </div>
+        <div class="field-error" *ngIf="emailField.invalid && emailField.touched">
+          <span *ngIf="emailField.errors?.['required']">Email is required</span>
+          <span *ngIf="emailField.errors?.['email']">Please enter a valid email address</span>
         </div>
       </div>
 
@@ -44,11 +56,19 @@
             id="password" 
             name="password" 
             [(ngModel)]="userData.password" 
+            #passwordField="ngModel"
             required 
-            minlength="6"
-            placeholder="Create a password"
+            minlength="8"
+            placeholder="Min 8 characters"
             autocomplete="new-password"
           >
+        </div>
+        <div class="field-error" *ngIf="passwordField.invalid && passwordField.touched">
+          <span *ngIf="passwordField.errors?.['required']">Password is required</span>
+          <span *ngIf="passwordField.errors?.['minlength']">Password must be at least 8 characters</span>
+        </div>
+        <div class="field-hint" *ngIf="!passwordField.touched || passwordField.valid">
+          Password must be at least 8 characters long
         </div>
       </div>
 
@@ -56,8 +76,9 @@
         {{ errorMessage }}
       </div>
 
-      <button type="submit" class="btn-primary auth-submit" [disabled]="!registerForm.form.valid">
-        Sign Up
+      <button type="submit" class="btn-primary auth-submit" [disabled]="!registerForm.form.valid || isLoading">
+        <span *ngIf="!isLoading">Sign Up</span>
+        <span *ngIf="isLoading">Creating account...</span>
       </button>
 
       <div class="auth-footer">

@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy, inject, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, HostListener, NgZone, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { TaskService } from '../../core/services/task.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -28,6 +29,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   tasks: TaskResponse[] = [];
   filteredTasks: TaskResponse[] = [];
   isLoading = true;
+  loadError = false;
+  isCreating = false;
+  toastMessage = '';
+  toastType: 'success' | 'error' = 'success';
+  private toastTimer: ReturnType<typeof setTimeout> | null = null;
   showModal = false;
   showEditModal = false;
   activeFilter = 'ALL';
@@ -72,7 +78,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     category: '',
     dueDate: '',
     estimatedHours: 0,
-    projectId: 1,
     labels: [] as string[],
     subtasks: [] as Subtask[]
   };
@@ -89,7 +94,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     category: '',
     dueDate: '',
     estimatedHours: 0,
-    projectId: 1,
     labels: [] as string[],
     subtasks: [] as Subtask[]
   };
@@ -104,6 +108,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private notificationService = inject(NotificationService);
   private activityService = inject(ActivityService);
   private router = inject(Router);
+  private ngZone = inject(NgZone);
+  private cdr = inject(ChangeDetectorRef);
 
   // ── Lifecycle ─────────────────────────────────────────────────
   ngOnInit(): void {
@@ -127,6 +133,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.clearPomodoro();
     this.notifSub?.unsubscribe();
     this.actSub?.unsubscribe();
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
+    }
   }
 
   // ── Global keyboard shortcuts ──────────────────────────────────
@@ -161,7 +170,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       total: this.tasks.length,
       todo: this.tasks.filter(t => t.status === TaskStatus.TODO).length,
       inProgress: this.tasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length,
-      done: this.tasks.filter(t => t.status === TaskStatus.DONE).length,
+      done: this.tasks.filter(t => t.status === TaskStatus.COMPLETED).length,
       overdue
     };
   }
@@ -174,14 +183,51 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // ── Tasks ──────────────────────────────────────────────────────
   loadTasks(): void {
     this.isLoading = true;
+    this.loadError = false;
     this.taskService.getTasks().subscribe({
       next: (data) => {
-        this.tasks = data;
-        this.applyFilterAndSearch();
-        this.isLoading = false;
+        this.refreshView(() => {
+          this.tasks = data || [];
+          try {
+            this.applyFilterAndSearch();
+          } catch (e) {
+            console.error('[Dashboard] applyFilterAndSearch error:', e);
+          }
+          this.isLoading = false;
+        });
       },
-      error: () => { this.isLoading = false; }
+      error: (err: HttpErrorResponse) => {
+        this.refreshView(() => {
+          this.isLoading = false;
+          if (err.status === 401) {
+            localStorage.removeItem('jwt_token');
+            localStorage.removeItem('current_user');
+            this.router.navigate(['/login']);
+          } else {
+            this.loadError = true;
+          }
+        });
+      }
     });
+  }
+
+  private refreshView(updater: () => void): void {
+    this.ngZone.run(() => {
+      updater();
+      this.cdr.detectChanges();
+    });
+  }
+
+  showToast(message: string, type: 'success' | 'error' = 'success'): void {
+    this.toastMessage = message;
+    this.toastType = type;
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
+    }
+    this.toastTimer = setTimeout(() => {
+      this.toastMessage = '';
+      this.cdr.detectChanges();
+    }, 4000);
   }
 
   applyFilter(filter: string): void {
@@ -215,7 +261,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   sortTasks(tasks: TaskResponse[]): TaskResponse[] {
-    const priorityOrder = { URGENT: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+    const priorityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
     switch (this.sortBy) {
       case 'priority':
         return [...tasks].sort((a, b) => (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2));
@@ -235,7 +281,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   isOverdue(task: TaskResponse): boolean {
-    if (!task.dueDate || task.status === TaskStatus.DONE) return false;
+    if (!task.dueDate || task.status === TaskStatus.COMPLETED) return false;
     return new Date(task.dueDate) < new Date(new Date().toDateString());
   }
 
@@ -284,7 +330,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   get noDueDateTasks(): TaskResponse[] {
-    return this.tasks.filter(t => !t.dueDate && t.status !== 'DONE');
+    return this.tasks.filter(t => !t.dueDate && t.status !== 'COMPLETED');
   }
 
   // ── Create Modal ───────────────────────────────────────────────
@@ -292,7 +338,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.newTask = {
       title: '', description: '', priority: TaskPriority.MEDIUM,
       status: withStatus || TaskStatus.TODO, category: '', dueDate: '',
-      estimatedHours: 0, projectId: 1, labels: [], subtasks: []
+      estimatedHours: 0, labels: [], subtasks: []
     };
     this.newLabelInput = '';
     this.newSubtaskInput = '';
@@ -329,13 +375,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   createTask(): void {
-    if (!this.newTask.title.trim()) return;
+    if (!this.newTask.title.trim() || this.isCreating) return;
+    this.isCreating = true;
     this.taskService.createTask(this.newTask).subscribe({
       next: (task) => {
-        this.activityService.logActivity(task.title, 'created', task.id);
-        this.notificationService.addNotification('Task Created', `"${task.title}" was created successfully.`, 'system');
-        this.closeModal();
-        this.loadTasks();
+        this.refreshView(() => {
+          this.isCreating = false;
+          this.activityService.logActivity(task.title, 'created', task.id);
+          this.notificationService.addNotification('Task Created', `"${task.title}" was created successfully.`, 'system');
+          this.showToast(`Task "${task.title}" created successfully.`);
+          this.closeModal();
+          this.loadTasks();
+        });
+      },
+      error: (err: HttpErrorResponse) => {
+        this.refreshView(() => {
+          this.isCreating = false;
+          const apiMessage = err.error?.message || err.error?.title;
+          this.showToast(apiMessage || 'Could not create the task. Please try again.', 'error');
+        });
       }
     });
   }
@@ -352,7 +410,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       category: task.category,
       dueDate: task.dueDate,
       estimatedHours: task.estimatedHours,
-      projectId: task.projectId,
       labels: [...(task.labels || [])],
       subtasks: (task.subtasks || []).map(s => ({ ...s }))
     };
@@ -399,7 +456,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   saveEdit(): void {
     if (!this.editingTask || !this.editTask.title.trim()) return;
-    this.taskService.updateTask(this.editingTask.id, this.editTask).subscribe({
+    this.taskService.updateTask(this.editingTask.id, {
+      ...this.editTask,
+      projectId: this.editingTask.projectId
+    }).subscribe({
       next: () => {
         this.activityService.logActivity(this.editTask.title, 'updated', this.editingTask!.id);
         this.closeEditModal();
@@ -422,10 +482,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   markDone(task: TaskResponse, event: Event): void {
     event.stopPropagation();
-    const newStatus = task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE;
+    const newStatus = task.status === TaskStatus.COMPLETED ? TaskStatus.TODO : TaskStatus.COMPLETED;
     this.taskService.updateTask(task.id, { ...task, status: newStatus, projectId: task.projectId }).subscribe({
       next: () => {
-        this.activityService.logActivity(task.title, newStatus === TaskStatus.DONE ? 'completed' : 'todo', task.id);
+        this.activityService.logActivity(task.title, newStatus === TaskStatus.COMPLETED ? 'completed' : 'todo', task.id);
         this.loadTasks();
       }
     });
@@ -433,7 +493,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   cycleStatus(task: TaskResponse, event: Event): void {
     event.stopPropagation();
-    const cycle = [TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.IN_REVIEW, TaskStatus.DONE];
+    const cycle = [TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.REVIEW, TaskStatus.COMPLETED];
     const idx = cycle.indexOf(task.status);
     const next = cycle[(idx + 1) % cycle.length];
     this.taskService.updateTask(task.id, { ...task, status: next, projectId: task.projectId }).subscribe({

@@ -3,6 +3,7 @@ package com.smarttask.pro.service;
 import com.smarttask.pro.dto.request.LoginRequest;
 import com.smarttask.pro.dto.request.RegisterRequest;
 import com.smarttask.pro.dto.response.AuthResponse;
+import com.smarttask.pro.exception.ConflictException;
 import com.smarttask.pro.model.entity.User;
 import com.smarttask.pro.model.enums.Role;
 import com.smarttask.pro.repository.UserRepository;
@@ -21,13 +22,14 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final ProjectService projectService;
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new ConflictException("Username already exists");
         }
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new ConflictException("Email already exists");
         }
 
         var user = User.builder()
@@ -37,7 +39,10 @@ public class AuthService {
                 .role(Role.ROLE_USER)
                 .build();
         
-        userRepository.save(user);
+        user = userRepository.save(user);
+
+        // Auto-create a default project for the newly registered user
+        projectService.getOrCreateDefaultProject(user);
         
         var jwtToken = jwtService.generateToken(user);
         

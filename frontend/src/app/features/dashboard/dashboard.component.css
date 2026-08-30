@@ -1,4 +1,30 @@
 /* ─── LAYOUT ─────────────────────────────────────────────────── */
+/* Error banner shown when task loading fails */
+.load-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+.btn-retry {
+  margin-left: auto;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #f87171;
+  border-radius: 6px;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+.btn-retry:hover { background: rgba(239, 68, 68, 0.35); }
+
 .dashboard-layout {
   display: flex;
   height: 100vh;

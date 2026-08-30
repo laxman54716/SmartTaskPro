@@ -7,10 +7,6 @@
       <p>Sign in to manage your tasks</p>
     </div>
 
-    <div class="demo-hint">
-      🎮 <strong>Demo mode</strong> — enter any username &amp; password to continue
-    </div>
-
     <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="auth-form">
       <div class="form-group">
         <label for="username">Username</label>
@@ -21,7 +17,7 @@
             name="username"
             [(ngModel)]="credentials.username"
             required
-            placeholder="e.g. admin"
+            placeholder="Enter your username"
             autocomplete="username"
           >
         </div>
@@ -36,7 +32,7 @@
             name="password"
             [(ngModel)]="credentials.password"
             required
-            placeholder="Any password works"
+            placeholder="Enter your password"
             autocomplete="current-password"
           >
         </div>

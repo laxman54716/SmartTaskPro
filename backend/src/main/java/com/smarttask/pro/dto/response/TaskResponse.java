@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -30,4 +31,5 @@ public class TaskResponse {
     private Long assigneeId;
     private Long reporterId;
     private LocalDateTime createdAt;
+    private List<SubtaskResponse> subtasks;
 }

@@ -27,13 +27,13 @@
            (dragend)="onDragEnd($event)"
            (click)="onCardClick(task, $event)"
            [class.overdue-card]="isOverdue(task)"
-           [class.task-row-done]="task.status === 'DONE'">
+           [class.task-row-done]="task.status === 'COMPLETED'">
            
         <div class="task-row-left">
-          <button class="row-check" (click)="onCardClick(task, $event)" [class.checked]="task.status === 'DONE'"
-            [title]="task.status === 'DONE' ? 'Mark as Todo' : 'Mark Done'">✓</button>
+          <button class="row-check" (click)="onCardClick(task, $event)" [class.checked]="task.status === 'COMPLETED'"
+            [title]="task.status === 'COMPLETED' ? 'Mark as Todo' : 'Mark Done'">✓</button>
           <div class="task-row-info">
-            <span class="task-row-title" [class.done-title]="task.status === 'DONE'">{{ task.title }}</span>
+            <span class="task-row-title" [class.done-title]="task.status === 'COMPLETED'">{{ task.title }}</span>
             <span class="task-row-meta">
               <span class="category-tag sm">{{ task.category || 'General' }}</span>
               <span class="status-pill" [class]="'status-' + task.status.toLowerCase()">{{ task.status.replace('_',' ') }}</span>

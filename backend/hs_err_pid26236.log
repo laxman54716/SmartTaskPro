@@ -1,0 +1,217 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 132120576 bytes for G1 virtual space
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   The process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+#   JVM is running with Unscaled Compressed Oops mode in which the Java heap is
+#     placed in the first 4GB address space. The Java Heap base address is the
+#     maximum limit for the native heap growth. Please use -XX:HeapBaseMinAddress
+#     to set the Java Heap base and to place the Java Heap above 4GB virtual address.
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (os_windows.cpp:3550), pid=26236, tid=34620
+#
+# JRE version:  (17.0.8+9) (build )
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (17.0.8+9-LTS-211, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, windows-amd64)
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Dclassworlds.conf=C:\\Users\\Lenovo\\.gemini\\antigravity-ide\\scratch\\SmartTaskPro\\apache-maven-3.9.6\\bin\\m2.conf -Dmaven.home=C:\\Users\\Lenovo\\.gemini\\antigravity-ide\\scratch\\SmartTaskPro\\apache-maven-3.9.6 -Dlibrary.jansi.path=C:\\Users\\Lenovo\\.gemini\\antigravity-ide\\scratch\\SmartTaskPro\\apache-maven-3.9.6\\lib\\jansi-native -Dmaven.multiModuleProjectDirectory=C:\\Users\\Lenovo\\.gemini\\antigravity-ide\\scratch\\SmartTaskPro\\backend org.codehaus.plexus.classworlds.launcher.Launcher test
+
+Host: Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz, 8 cores, 7G,  Windows 11 , 64 bit Build 26100 (10.0.26100.8328)
+Time: Sun Aug 23 16:24:01 2026 India Standard Time elapsed time: 1.161258 seconds (0d 0h 0m 1s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000014d87404ee0):  JavaThread "Unknown thread" [_thread_in_vm, id=34620, stack(0x000000430de00000,0x000000430df00000)]
+
+Stack: [0x000000430de00000,0x000000430df00000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x677d0a]
+V  [jvm.dll+0x7d8c54]
+V  [jvm.dll+0x7da3fe]
+V  [jvm.dll+0x7daa63]
+V  [jvm.dll+0x245c5f]
+V  [jvm.dll+0x674bb9]
+V  [jvm.dll+0x6694f2]
+V  [jvm.dll+0x3031d6]
+V  [jvm.dll+0x30a756]
+V  [jvm.dll+0x359f9e]
+V  [jvm.dll+0x35a1cf]
+V  [jvm.dll+0x2da3e8]
+V  [jvm.dll+0x2db354]
+V  [jvm.dll+0x7aa711]
+V  [jvm.dll+0x367b51]
+V  [jvm.dll+0x789979]
+V  [jvm.dll+0x3eb05f]
+V  [jvm.dll+0x3ecae1]
+C  [jli.dll+0x5297]
+C  [ucrtbase.dll+0x37b0]
+C  [KERNEL32.DLL+0x2e957]
+C  [ntdll.dll+0x427c]
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x00007ffdefac59d8, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+
+Other Threads:
+  0x0000014d8745f760 GCTaskThread "GC Thread#0" [stack: 0x000000430df00000,0x000000430e000000] [id=34068]
+  0x0000014d874701a0 ConcurrentGCThread "G1 Main Marker" [stack: 0x000000430e000000,0x000000430e100000] [id=16316]
+  0x0000014d87471880 ConcurrentGCThread "G1 Conc#0" [stack: 0x000000430e100000,0x000000430e200000] [id=25100]
+
+[error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffdef2fb047]
+
+VM state: not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x0000014d87403010] Heap_lock - owner thread: 0x0000014d87404ee0
+
+Heap address: 0x0000000082800000, size: 2008 MB, Compressed Oops mode: 32-bit
+
+CDS archive(s) mapped at: [0x0000000000000000-0x0000000000000000-0x0000000000000000), size 0, SharedBaseAddress: 0x0000000800000000, ArchiveRelocationMode: 1.
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 0, Narrow klass range: 0x0
+
+GC Precious Log:
+<Empty>
+
+Heap:
+ garbage-first heap   total 0K, used 0K [0x0000000082800000, 0x0000000100000000)
+  region size 1024K, 0 young (0K), 0 survivors (0K)
+
+[error occurred during error reporting (printing heap information), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffdef6e1499]
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (0 events):
+No events
+
+Classes unloaded (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+VM Operations (0 events):
+No events
+
+Events (1 events):
+Event: 0.016 Loaded shared library C:\Program Files\Java\jdk-17\bin\java.dll
+
+
+Dynamic libraries:
+0x00007ff702270000 - 0x00007ff702280000 	C:\Program Files\Java\jdk-17\bin\java.exe
+0x00007ffe78fc0000 - 0x00007ffe79227000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffe780d0000 - 0x00007ffe78199000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ffe768b0000 - 0x00007ffe76ca7000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ffe75ad0000 - 0x00007ffe75c1b000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ffe32b30000 - 0x00007ffe32b4b000 	C:\Program Files\Java\jdk-17\bin\VCRUNTIME140.dll
+0x00007ffe2cf10000 - 0x00007ffe2cf29000 	C:\Program Files\Java\jdk-17\bin\jli.dll
+0x00007ffe77500000 - 0x00007ffe775b6000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ffe78380000 - 0x00007ffe78429000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ffe78cd0000 - 0x00007ffe78d77000 	C:\WINDOWS\System32\sechost.dll
+0x00007ffe77780000 - 0x00007ffe77898000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ffe78560000 - 0x00007ffe78726000 	C:\WINDOWS\System32\USER32.dll
+0x00007ffe75aa0000 - 0x00007ffe75ac7000 	C:\WINDOWS\System32\win32u.dll
+0x00007ffe5fae0000 - 0x00007ffe5fd72000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.26100.8457_none_3e0b2faee331e92d\COMCTL32.dll
+0x00007ffe76d40000 - 0x00007ffe76d6b000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ffe766d0000 - 0x00007ffe767fc000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ffe759f0000 - 0x00007ffe75a93000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ffe6f840000 - 0x00007ffe6f84b000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffe787b0000 - 0x00007ffe787e2000 	C:\WINDOWS\System32\IMM32.DLL
+0x00007ffe376a0000 - 0x00007ffe376ac000 	C:\Program Files\Java\jdk-17\bin\vcruntime140_1.dll
+0x00007ffe21160000 - 0x00007ffe211ee000 	C:\Program Files\Java\jdk-17\bin\msvcp140.dll
+0x00007ffdef010000 - 0x00007ffdefbee000 	C:\Program Files\Java\jdk-17\bin\server\jvm.dll
+0x00007ffe77930000 - 0x00007ffe77938000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007ffe60950000 - 0x00007ffe60986000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffe5a520000 - 0x00007ffe5a52a000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffe78e80000 - 0x00007ffe78f00000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ffe74780000 - 0x00007ffe7479b000 	C:\WINDOWS\SYSTEM32\kernel.appcore.dll
+0x00007ffe37420000 - 0x00007ffe3742a000 	C:\Program Files\Java\jdk-17\bin\jimage.dll
+0x00007ffe73920000 - 0x00007ffe73b62000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
+0x00007ffe787f0000 - 0x00007ffe78b73000 	C:\WINDOWS\System32\combase.dll
+0x00007ffe78480000 - 0x00007ffe78559000 	C:\WINDOWS\System32\OLEAUT32.dll
+0x00007ffe5aa90000 - 0x00007ffe5aacb000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
+0x00007ffe76800000 - 0x00007ffe768a8000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007ffe2a2a0000 - 0x00007ffe2a2c5000 	C:\Program Files\Java\jdk-17\bin\java.dll
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Program Files\Java\jdk-17\bin;C:\WINDOWS\SYSTEM32;C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.26100.8457_none_3e0b2faee331e92d;C:\Program Files\Java\jdk-17\bin\server
+
+VM Arguments:
+jvm_args: -Dclassworlds.conf=C:\\Users\\Lenovo\\.gemini\\antigravity-ide\\scratch\\SmartTaskPro\\apache-maven-3.9.6\\bin\\m2.conf -Dmaven.home=C:\\Users\\Lenovo\\.gemini\\antigravity-ide\\scratch\\SmartTaskPro\\apache-maven-3.9.6 -Dlibrary.jansi.path=C:\\Users\\Lenovo\\.gemini\\antigravity-ide\\scratch\\SmartTaskPro\\apache-maven-3.9.6\\lib\\jansi-native -Dmaven.multiModuleProjectDirectory=C:\\Users\\Lenovo\\.gemini\\antigravity-ide\\scratch\\SmartTaskPro\\backend 
+java_command: org.codehaus.plexus.classworlds.launcher.Launcher test
+java_class_path (initial): C:\\Users\\Lenovo\\.gemini\\antigravity-ide\\scratch\\SmartTaskPro\\apache-maven-3.9.6\\boot\\plexus-classworlds-2.7.0.jar
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 4                                         {product} {ergonomic}
+     uint ConcGCThreads                            = 2                                         {product} {ergonomic}
+     uint G1ConcRefinementThreads                  = 8                                         {product} {ergonomic}
+   size_t G1HeapRegionSize                         = 1048576                                   {product} {ergonomic}
+    uintx GCDrainStackTargetSize                   = 64                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 132120576                                 {product} {ergonomic}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MaxHeapSize                              = 2105540608                                {product} {ergonomic}
+   size_t MinHeapDeltaBytes                        = 1048576                                   {product} {ergonomic}
+   size_t MinHeapSize                              = 8388608                                   {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 5839372                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122909434                              {pd product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122909434                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+   size_t SoftMaxHeapSize                          = 2105540608                             {manageable} {ergonomic}
+     bool UseCompressedClassPointers               = true                           {product lp64_product} {ergonomic}
+     bool UseCompressedOops                        = true                           {product lp64_product} {ergonomic}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {ergonomic}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags
+ #1: stderr all=off uptime,level,tags
+
+Environment Variables:
+PATH=C:/Users/Lenovo/.gemini/antigravity-ide/bin;C:\app\Lenovo\product\21c\dbhomeXE\bin;C:\Program Files\Common Files\Oracle\Java\javapath;D:\Oracle19c\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Windows\SysWow64;C:\Program Files\WireGuard\;C:\Program Files\Git\cmd;D:\;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\Lenovo\AppData\Local\Programs\Python\Python39\python.exe;C:\Program Files\JetBrains\PyCharm Community Edition 2022.2.3\bin;C:\ProgramData\Lenovo\atom\bin;C:\Users\Lenovo\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Lenovo\AppData\Local\Microsoft\WindowsApps;C:\Users\Lenovo\AppData\Roaming\npm;C:\Users\Lenovo\AppData\Local\Programs\Antigravity IDE\bin
+USERNAME=Lenovo
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 142 Stepping 12, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS:
+ Windows 11 , 64 bit Build 26100 (10.0.26100.8328)
+OS uptime: 47 days 1:10 hours
+Hyper-V role detected
+
+CPU: total 8 (initial active 8) (4 cores per cpu, 2 threads per core) family 6 model 142 stepping 12 microcode 0xea, cx8, cmov, fxsr, ht, mmx, 3dnowpref, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, lzcnt, tsc, tscinvbit, avx, avx2, aes, erms, clmul, bmi1, bmi2, adx, fma, vzeroupper, clflush, clflushopt, hv
+
+Memory: 4k page, system-wide physical 8025M (630M free)
+TotalPageFile size 32601M (AvailPageFile size 39M)
+current process WorkingSet (physical memory assigned to process): 13M, peak: 13M
+current process commit charge ("private bytes"): 60M, peak: 186M
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (17.0.8+9-LTS-211) for windows-amd64 JRE (17.0.8+9-LTS-211), built on Jun 14 2023 10:34:31 by "mach5one" with MS VC++ 17.1 (VS2022)
+
+END.
