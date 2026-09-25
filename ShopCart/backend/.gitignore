@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.local
+.env.production
+*.log
+coverage/
+qa_audit*.js
+regression_test.js
+run_full_qa.ps1
