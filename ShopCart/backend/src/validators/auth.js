@@ -21,4 +21,19 @@ const loginRules = [
   body('password').notEmpty().withMessage('Password is required'),
 ];
 
-module.exports = { registerRules, loginRules };
+const updateProfileRules = [
+  body('first_name').optional().trim().notEmpty().withMessage('First name cannot be empty')
+    .isLength({ max: 100 }).withMessage('First name too long'),
+  body('last_name').optional().trim().notEmpty().withMessage('Last name cannot be empty')
+    .isLength({ max: 100 }).withMessage('Last name too long'),
+  body('phone').optional().trim(),
+];
+
+const changePasswordRules = [
+  body('current_password').notEmpty().withMessage('Current password is required'),
+  body('new_password').isLength({ min: 8 }).withMessage('New password must be at least 8 characters')
+    .matches(/[A-Z]/).withMessage('New password must contain an uppercase letter')
+    .matches(/[0-9]/).withMessage('New password must contain a number'),
+];
+
+module.exports = { registerRules, loginRules, updateProfileRules, changePasswordRules };

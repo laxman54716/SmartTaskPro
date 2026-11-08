@@ -9,18 +9,20 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
   const [error, setError] = useState('');
   
-  const { cart, fetchCart } = useCart();
+  const { cart, fetchCart, loading: cartLoading } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (cartLoading || orderPlaced) return;
     if (!cart || cart.items.length === 0) {
       navigate('/cart');
       return;
     }
     fetchAddresses();
-  }, [cart, navigate]);
+  }, [cart, cartLoading, orderPlaced, navigate]);
 
   const fetchAddresses = async () => {
     try {
@@ -48,7 +50,8 @@ const Checkout = () => {
         payment_method: paymentMethod
       });
       
-      await fetchCart(); // refresh empty cart
+      setOrderPlaced(true);
+      fetchCart(); // refresh empty cart in background
       navigate(`/orders/${res.data.data.id}`);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to place order');
@@ -112,6 +115,7 @@ const Checkout = () => {
                 <input 
                   type="radio" 
                   name="payment" 
+                  value="card"
                   checked={paymentMethod === 'card'}
                   onChange={() => setPaymentMethod('card')}
                   style={{ marginTop: '0.25rem' }}
@@ -125,6 +129,7 @@ const Checkout = () => {
                 <input 
                   type="radio" 
                   name="payment" 
+                  value="cod"
                   checked={paymentMethod === 'cod'}
                   onChange={() => setPaymentMethod('cod')}
                   style={{ marginTop: '0.25rem' }}
@@ -184,7 +189,7 @@ const Checkout = () => {
             style={{ width: '100%', padding: '1rem', fontSize: '1rem' }}
             disabled={submitting || !selectedAddress}
           >
-            {submitting ? 'Processing...' : `Pay $${cart.total.toFixed(2)}`}
+            {submitting ? 'Processing...' : paymentMethod === 'cod' ? `Place Order ($${cart.total.toFixed(2)})` : `Pay $${cart.total.toFixed(2)}`}
           </button>
         </div>
       </div>

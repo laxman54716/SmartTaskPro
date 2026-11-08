@@ -31,17 +31,19 @@ const getDashboard = async () => {
 };
 
 const getCustomers = async ({ page = 1, limit = 20 }) => {
-  const offset = (page - 1) * limit;
+  const pageNum = Math.max(1, parseInt(page) || 1);
+  const limitNum = Math.max(1, Math.min(100, parseInt(limit) || 20));
+  const offset = (pageNum - 1) * limitNum;
   const countResult = await db.query("SELECT COUNT(*) FROM users WHERE role = 'customer'");
   const total = parseInt(countResult.rows[0].count);
 
   const result = await db.query(
     `SELECT id, first_name, last_name, email, phone, created_at FROM users
      WHERE role = 'customer' ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
-    [limit, offset]
+    [limitNum, offset]
   );
 
-  return { customers: result.rows, page: parseInt(page), limit: parseInt(limit), total, totalPages: Math.ceil(total / limit) };
+  return { customers: result.rows, page: pageNum, limit: limitNum, total, totalPages: Math.ceil(total / limitNum) };
 };
 
 module.exports = { getDashboard, getCustomers };

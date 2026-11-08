@@ -105,51 +105,51 @@ const Addresses = () => {
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">Label (e.g., Home, Work)</label>
-                <input className="form-input" type="text" required
+                <label htmlFor="label" className="form-label">Label (e.g., Home, Work)</label>
+                <input id="label" className="form-input" type="text" required
                   value={formData.label} onChange={e => setFormData({...formData, label: e.target.value})} />
               </div>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">Phone Number</label>
-                <input className="form-input" type="tel" 
+                <label htmlFor="phone" className="form-label">Phone Number</label>
+                <input id="phone" className="form-input" type="tel" 
                   value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
               </div>
             </div>
             
             <div className="form-group">
-              <label className="form-label">Address Line 1</label>
-              <input className="form-input" type="text" required
+              <label htmlFor="address_line1" className="form-label">Address Line 1</label>
+              <input id="address_line1" className="form-input" type="text" required
                 value={formData.address_line1} onChange={e => setFormData({...formData, address_line1: e.target.value})} />
             </div>
             
             <div className="form-group">
-              <label className="form-label">Address Line 2 (Optional)</label>
-              <input className="form-input" type="text" 
+              <label htmlFor="address_line2" className="form-label">Address Line 2 (Optional)</label>
+              <input id="address_line2" className="form-input" type="text" 
                 value={formData.address_line2} onChange={e => setFormData({...formData, address_line2: e.target.value})} />
             </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">City</label>
-                <input className="form-input" type="text" required
+                <label htmlFor="city" className="form-label">City</label>
+                <input id="city" className="form-input" type="text" required
                   value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} />
               </div>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">State</label>
-                <input className="form-input" type="text" required
+                <label htmlFor="state" className="form-label">State</label>
+                <input id="state" className="form-input" type="text" required
                   value={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} />
               </div>
             </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">Postal Code</label>
-                <input className="form-input" type="text" required
+                <label htmlFor="postal_code" className="form-label">Postal Code</label>
+                <input id="postal_code" className="form-input" type="text" required
                   value={formData.postal_code} onChange={e => setFormData({...formData, postal_code: e.target.value})} />
               </div>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">Country</label>
-                <input className="form-input" type="text" required
+                <label htmlFor="country" className="form-label">Country</label>
+                <input id="country" className="form-input" type="text" required
                   value={formData.country} onChange={e => setFormData({...formData, country: e.target.value})} />
               </div>
             </div>

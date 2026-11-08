@@ -5,19 +5,20 @@ import { AuthContext } from './AuthContext';
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const { user } = useContext(AuthContext);
+  const { user, loading: authLoading } = useContext(AuthContext);
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (authLoading) return;
     if (user && user.role !== 'admin') {
       fetchCart();
     } else {
       setCart(null);
       setLoading(false);
     }
-  }, [user]);
+  }, [user, authLoading]);
 
   const fetchCart = async () => {
     setLoading(true);

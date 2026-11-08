@@ -7,8 +7,16 @@ const errorHandler = (err, req, res, _next) => {
     console.error('Error:', err.message);
   }
 
+  if (err.statusCode) {
+    return sendError(res, err.message, err.statusCode);
+  }
+
   if (err.type === 'entity.parse.failed') {
     return sendError(res, 'Invalid JSON in request body', 400);
+  }
+
+  if (err.code === '22P02') {
+    return sendError(res, 'Invalid ID format', 400);
   }
 
   if (err.code === '23505') {

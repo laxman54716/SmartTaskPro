@@ -1,8 +1,14 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
+const connectionString = (process.env.NODE_ENV === 'test' && process.env.TEST_DATABASE_URL)
+  ? process.env.TEST_DATABASE_URL
+  : (process.env.NODE_ENV === 'test' && process.env.DATABASE_URL
+      ? process.env.DATABASE_URL.replace(/\/shopcart$/, '/shopcart_test')
+      : process.env.DATABASE_URL);
+
 const poolConfig = {
-  connectionString: process.env.DATABASE_URL,
+  connectionString,
 };
 
 // Cloud PostgreSQL providers (Neon, etc.) require SSL

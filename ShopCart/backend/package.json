@@ -10,7 +10,12 @@
     "db:seed": "node src/db/runSeed.js",
     "db:reset": "node src/db/runSchema.js && node src/db/runSeed.js",
     "db:setup": "node src/db/setup.js",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest",
+    "test:auth": "cross-env NODE_ENV=test jest tests/auth.test.js",
+    "test:products": "cross-env NODE_ENV=test jest tests/products.test.js",
+    "test:orders": "cross-env NODE_ENV=test jest tests/orders.test.js",
+    "test:security": "cross-env NODE_ENV=test jest tests/security.test.js",
+    "test:db": "cross-env NODE_ENV=test jest tests/database.test.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

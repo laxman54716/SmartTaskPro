@@ -55,6 +55,10 @@ const getCart = async (userId) => {
 };
 
 const addItem = async (userId, { product_id, quantity }) => {
+  if (!quantity || quantity < 1) {
+    throw Object.assign(new Error('Quantity must be at least 1'), { statusCode: 400 });
+  }
+
   // Validate product
   const product = await db.query(
     'SELECT id, stock_quantity, is_active FROM products WHERE id = $1',
@@ -100,6 +104,10 @@ const addItem = async (userId, { product_id, quantity }) => {
 };
 
 const updateItem = async (userId, itemId, { quantity }) => {
+  if (!quantity || quantity < 1) {
+    throw Object.assign(new Error('Quantity must be at least 1'), { statusCode: 400 });
+  }
+
   const cart = await db.query('SELECT id FROM carts WHERE user_id = $1', [userId]);
   if (cart.rows.length === 0) {
     throw Object.assign(new Error('Cart not found'), { statusCode: 404 });

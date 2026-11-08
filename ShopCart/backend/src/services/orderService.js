@@ -82,8 +82,12 @@ const createOrder = async (userId, { address_id, payment_method, notes }) => {
     if (payment_method === 'cod') {
       paymentStatus = 'pending';
     } else if (payment_method === 'card') {
-      // Simulate card payment (90% success rate)
-      paymentStatus = Math.random() < 0.9 ? 'paid' : 'failed';
+      if (process.env.MOCK_PAYMENT_STATUS) {
+        paymentStatus = process.env.MOCK_PAYMENT_STATUS;
+      } else {
+        // Simulate card payment (90% success rate)
+        paymentStatus = Math.random() < 0.9 ? 'paid' : 'failed';
+      }
     }
 
     if (paymentStatus === 'failed') {
@@ -149,21 +153,23 @@ const createOrder = async (userId, { address_id, payment_method, notes }) => {
 };
 
 const getOrders = async (userId, { page = 1, limit = 10 }) => {
-  const offset = (page - 1) * limit;
+  const pageNum = Math.max(1, parseInt(page) || 1);
+  const limitNum = Math.max(1, Math.min(100, parseInt(limit) || 10));
+  const offset = (pageNum - 1) * limitNum;
   const countResult = await db.query('SELECT COUNT(*) FROM orders WHERE user_id = $1', [userId]);
   const total = parseInt(countResult.rows[0].count);
 
   const result = await db.query(
     `SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
-    [userId, limit, offset]
+    [userId, limitNum, offset]
   );
 
   return {
     orders: result.rows,
-    page: parseInt(page),
-    limit: parseInt(limit),
+    page: pageNum,
+    limit: limitNum,
     total,
-    totalPages: Math.ceil(total / limit),
+    totalPages: Math.ceil(total / limitNum),
   };
 };
 
@@ -235,7 +241,9 @@ const cancelOrder = async (userId, orderId) => {
 
 // Admin functions
 const getAllOrders = async ({ page = 1, limit = 20, status, search }) => {
-  const offset = (page - 1) * limit;
+  const pageNum = Math.max(1, parseInt(page) || 1);
+  const limitNum = Math.max(1, Math.min(100, parseInt(limit) || 20));
+  const offset = (pageNum - 1) * limitNum;
   const params = [];
   const conditions = [];
   let paramIndex = 1;
@@ -260,7 +268,7 @@ const getAllOrders = async ({ page = 1, limit = 20, status, search }) => {
   );
   const total = parseInt(countResult.rows[0].count);
 
-  params.push(limit);
+  params.push(limitNum);
   params.push(offset);
 
   const result = await db.query(
@@ -273,10 +281,21 @@ const getAllOrders = async ({ page = 1, limit = 20, status, search }) => {
     params
   );
 
-  return { orders: result.rows, page: parseInt(page), limit: parseInt(limit), total, totalPages: Math.ceil(total / limit) };
+  return { orders: result.rows, page: pageNum, limit: limitNum, total, totalPages: Math.ceil(total / limitNum) };
 };
 
 const updateOrderStatus = async (orderId, { order_status, payment_status }) => {
+  const validOrderStatuses = ['placed', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+  const validPaymentStatuses = ['pending', 'paid', 'failed', 'refunded'];
+
+  if (order_status && !validOrderStatuses.includes(order_status)) {
+    throw Object.assign(new Error(`Invalid order status. Allowed: ${validOrderStatuses.join(', ')}`), { statusCode: 400 });
+  }
+
+  if (payment_status && !validPaymentStatuses.includes(payment_status)) {
+    throw Object.assign(new Error(`Invalid payment status. Allowed: ${validPaymentStatuses.join(', ')}`), { statusCode: 400 });
+  }
+
   const sets = [];
   const params = [];
   let paramIndex = 1;

@@ -1,7 +1,11 @@
 const db = require('../db');
 
 const getProducts = async ({ page = 1, limit = 12, search, category_id, min_price, max_price, in_stock, sort }) => {
-  const offset = (page - 1) * limit;
+  const parsedPage = parseInt(page);
+  const pageNum = (!isNaN(parsedPage) && parsedPage > 0) ? parsedPage : 1;
+  const parsedLimit = parseInt(limit);
+  const limitNum = (!isNaN(parsedLimit) && parsedLimit > 0) ? Math.min(100, parsedLimit) : 12;
+  const offset = (pageNum - 1) * limitNum;
   const params = [];
   const conditions = ['p.is_active = true'];
   let paramIndex = 1;
@@ -12,19 +16,19 @@ const getProducts = async ({ page = 1, limit = 12, search, category_id, min_pric
     paramIndex++;
   }
 
-  if (category_id) {
+  if (category_id && !isNaN(parseInt(category_id))) {
     conditions.push(`p.category_id = $${paramIndex}`);
     params.push(parseInt(category_id));
     paramIndex++;
   }
 
-  if (min_price) {
+  if (min_price !== undefined && min_price !== '' && !isNaN(parseFloat(min_price))) {
     conditions.push(`COALESCE(p.discount_price, p.price) >= $${paramIndex}`);
     params.push(parseFloat(min_price));
     paramIndex++;
   }
 
-  if (max_price) {
+  if (max_price !== undefined && max_price !== '' && !isNaN(parseFloat(max_price))) {
     conditions.push(`COALESCE(p.discount_price, p.price) <= $${paramIndex}`);
     params.push(parseFloat(max_price));
     paramIndex++;
@@ -49,7 +53,7 @@ const getProducts = async ({ page = 1, limit = 12, search, category_id, min_pric
   );
   const total = parseInt(countResult.rows[0].count);
 
-  params.push(limit);
+  params.push(limitNum);
   params.push(offset);
 
   const result = await db.query(
@@ -64,10 +68,10 @@ const getProducts = async ({ page = 1, limit = 12, search, category_id, min_pric
 
   return {
     products: result.rows,
-    page: parseInt(page),
-    limit: parseInt(limit),
+    page: pageNum,
+    limit: limitNum,
     total,
-    totalPages: Math.ceil(total / limit),
+    totalPages: Math.ceil(total / limitNum),
   };
 };
 
@@ -95,20 +99,28 @@ const createProduct = async (data) => {
 
 const updateProduct = async (id, data) => {
   const { name, description, price, discount_price, category_id, image_url, stock_quantity, sku, is_active } = data;
+  const sets = [];
+  const params = [];
+  let paramIndex = 1;
+
+  if (name !== undefined) { sets.push(`name = $${paramIndex++}`); params.push(name); }
+  if (description !== undefined) { sets.push(`description = $${paramIndex++}`); params.push(description); }
+  if (price !== undefined) { sets.push(`price = $${paramIndex++}`); params.push(price); }
+  if (discount_price !== undefined) { sets.push(`discount_price = $${paramIndex++}`); params.push(discount_price); }
+  if (category_id !== undefined) { sets.push(`category_id = $${paramIndex++}`); params.push(category_id); }
+  if (image_url !== undefined) { sets.push(`image_url = $${paramIndex++}`); params.push(image_url); }
+  if (stock_quantity !== undefined) { sets.push(`stock_quantity = $${paramIndex++}`); params.push(stock_quantity); }
+  if (sku !== undefined) { sets.push(`sku = $${paramIndex++}`); params.push(sku); }
+  if (is_active !== undefined) { sets.push(`is_active = $${paramIndex++}`); params.push(is_active); }
+
+  if (sets.length === 0) {
+    return getProductById(id);
+  }
+
+  params.push(id);
   const result = await db.query(
-    `UPDATE products SET
-       name = COALESCE($1, name),
-       description = COALESCE($2, description),
-       price = COALESCE($3, price),
-       discount_price = $4,
-       category_id = $5,
-       image_url = COALESCE($6, image_url),
-       stock_quantity = COALESCE($7, stock_quantity),
-       sku = COALESCE($8, sku),
-       is_active = COALESCE($9, is_active)
-     WHERE id = $10
-     RETURNING *`,
-    [name, description, price, discount_price, category_id, image_url, stock_quantity, sku, is_active, id]
+    `UPDATE products SET ${sets.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
+    params
   );
   return result.rows[0] || null;
 };
@@ -127,7 +139,9 @@ const deleteProduct = async (id) => {
 };
 
 const getAllProductsAdmin = async ({ page = 1, limit = 20, search }) => {
-  const offset = (page - 1) * limit;
+  const pageNum = Math.max(1, parseInt(page) || 1);
+  const limitNum = Math.max(1, Math.min(100, parseInt(limit) || 20));
+  const offset = (pageNum - 1) * limitNum;
   const params = [];
   let whereClause = '';
   let paramIndex = 1;
@@ -141,7 +155,7 @@ const getAllProductsAdmin = async ({ page = 1, limit = 20, search }) => {
   const countResult = await db.query(`SELECT COUNT(*) FROM products p ${whereClause}`, params);
   const total = parseInt(countResult.rows[0].count);
 
-  params.push(limit);
+  params.push(limitNum);
   params.push(offset);
 
   const result = await db.query(
@@ -153,7 +167,7 @@ const getAllProductsAdmin = async ({ page = 1, limit = 20, search }) => {
     params
   );
 
-  return { products: result.rows, page: parseInt(page), limit: parseInt(limit), total, totalPages: Math.ceil(total / limit) };
+  return { products: result.rows, page: pageNum, limit: limitNum, total, totalPages: Math.ceil(total / limitNum) };
 };
 
 module.exports = { getProducts, getProductById, createProduct, updateProduct, deleteProduct, getAllProductsAdmin };

@@ -70,22 +70,22 @@ const Products = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>All Products</h1>
         
-        <form onSubmit={handleSearch} style={{ display: 'flex', gap: '0.5rem' }}>
+        <form onSubmit={handleSearch} style={{ display: 'flex', gap: '0.5rem', width: '100%', maxWidth: '350px' }}>
           <input 
             type="text" 
             name="search" 
             defaultValue={currentSearch} 
             placeholder="Search products..." 
             className="form-input" 
-            style={{ width: '250px' }}
+            style={{ flex: 1, minWidth: 0 }}
           />
-          <button type="submit" className="btn btn-primary">Search</button>
+          <button type="submit" className="btn btn-primary" style={{ flexShrink: 0 }}>Search</button>
         </form>
       </div>
 
-      <div style={{ display: 'flex', gap: '2rem', flexDirection: 'row', alignItems: 'flex-start' }}>
+      <div className="products-layout">
         {/* Filters Sidebar */}
-        <div className="card" style={{ padding: '1.5rem', width: '250px', flexShrink: 0 }}>
+        <div className="card products-sidebar">
           <h3 style={{ fontWeight: 'bold', marginBottom: '1rem' }}>Filters</h3>
           
           <div style={{ marginBottom: '1.5rem' }}>

@@ -39,20 +39,31 @@ const updateAddress = async (userId, addressId, data) => {
     await db.query('UPDATE addresses SET is_default = false WHERE user_id = $1', [userId]);
   }
 
+  const sets = [];
+  const params = [];
+  let paramIndex = 1;
+
+  if (label !== undefined) { sets.push(`label = $${paramIndex++}`); params.push(label); }
+  if (address_line1 !== undefined) { sets.push(`address_line1 = $${paramIndex++}`); params.push(address_line1); }
+  if (address_line2 !== undefined) { sets.push(`address_line2 = $${paramIndex++}`); params.push(address_line2); }
+  if (city !== undefined) { sets.push(`city = $${paramIndex++}`); params.push(city); }
+  if (state !== undefined) { sets.push(`state = $${paramIndex++}`); params.push(state); }
+  if (postal_code !== undefined) { sets.push(`postal_code = $${paramIndex++}`); params.push(postal_code); }
+  if (country !== undefined) { sets.push(`country = $${paramIndex++}`); params.push(country); }
+  if (phone !== undefined) { sets.push(`phone = $${paramIndex++}`); params.push(phone); }
+  if (is_default !== undefined) { sets.push(`is_default = $${paramIndex++}`); params.push(is_default); }
+
+  if (sets.length === 0) {
+    return getAddressById(userId, addressId);
+  }
+
+  params.push(addressId);
+  params.push(userId);
   const result = await db.query(
-    `UPDATE addresses SET
-       label = COALESCE($1, label),
-       address_line1 = COALESCE($2, address_line1),
-       address_line2 = $3,
-       city = COALESCE($4, city),
-       state = COALESCE($5, state),
-       postal_code = COALESCE($6, postal_code),
-       country = COALESCE($7, country),
-       phone = COALESCE($8, phone),
-       is_default = COALESCE($9, is_default)
-     WHERE id = $10 AND user_id = $11
+    `UPDATE addresses SET ${sets.join(', ')}
+     WHERE id = $${paramIndex} AND user_id = $${paramIndex + 1}
      RETURNING *`,
-    [label, address_line1, address_line2, city, state, postal_code, country, phone, is_default, addressId, userId]
+    params
   );
   return result.rows[0] || null;
 };

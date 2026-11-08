@@ -30,10 +30,23 @@ const updateCategory = async (id, { name, description, is_active }) => {
       throw Object.assign(new Error('Category name already exists'), { statusCode: 409 });
     }
   }
+
+  const sets = [];
+  const params = [];
+  let paramIndex = 1;
+
+  if (name !== undefined) { sets.push(`name = $${paramIndex++}`); params.push(name); }
+  if (description !== undefined) { sets.push(`description = $${paramIndex++}`); params.push(description); }
+  if (is_active !== undefined) { sets.push(`is_active = $${paramIndex++}`); params.push(is_active); }
+
+  if (sets.length === 0) {
+    return getCategoryById(id);
+  }
+
+  params.push(id);
   const result = await db.query(
-    `UPDATE categories SET name = COALESCE($1, name), description = COALESCE($2, description), is_active = COALESCE($3, is_active)
-     WHERE id = $4 RETURNING *`,
-    [name, description, is_active, id]
+    `UPDATE categories SET ${sets.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
+    params
   );
   return result.rows[0] || null;
 };
