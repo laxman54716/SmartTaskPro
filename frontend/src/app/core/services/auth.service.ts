@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LoginRequest, RegisterRequest, AuthResponse } from '../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 const TOKEN_KEY = 'jwt_token';
 const USER_KEY = 'current_user';
@@ -12,7 +13,7 @@ const USER_KEY = 'current_user';
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:8080/api/v1/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient) {}
 
