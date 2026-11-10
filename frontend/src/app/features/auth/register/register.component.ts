@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -19,6 +19,7 @@ export class RegisterComponent {
   
   private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   onSubmit() {
     this.isLoading = true;
@@ -41,6 +42,7 @@ export class RegisterComponent {
         } else {
           this.errorMessage = 'Registration failed. Please try again.';
         }
+        this.cdr.detectChanges();
         console.error('Registration error', err);
       }
     });
