@@ -4,9 +4,11 @@ import { loginGuard } from './core/guards/login.guard';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { LandingComponent } from './features/landing/landing.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', component: LandingComponent, pathMatch: 'full' },
+  { path: 'home', component: LandingComponent },
   { path: 'login', component: LoginComponent, canActivate: [loginGuard] },
   { path: 'register', component: RegisterComponent, canActivate: [loginGuard] },
   { 
@@ -14,6 +16,6 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [authGuard]
   },
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '' }
 ];
 
