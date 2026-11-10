@@ -1,416 +1,496 @@
 <div class="landing-page">
-  <!-- Background Glow Orbs -->
-  <div class="glow-orb orb-primary"></div>
-  <div class="glow-orb orb-coral"></div>
-  <div class="glow-orb orb-emerald"></div>
+  <!-- Subtle Grid Pattern Background -->
+  <div class="bg-grid-pattern"></div>
 
   <!-- ── Top Navigation Bar ────────────────────────────────────────────── -->
-  <header class="landing-navbar glass-nav">
-    <div class="nav-container">
-      <a routerLink="/" class="nav-logo">
-        <span class="logo-icon">⚡</span>
-        <span class="logo-text">SmartTask<span class="pro">Pro</span></span>
-      </a>
+  <header class="navbar">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <a routerLink="/" class="logo">
+          <svg class="logo-mark" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span class="logo-text">SmartTask<span class="logo-badge">Pro</span></span>
+        </a>
+        <span class="version-tag">v2.1</span>
+      </div>
 
-      <nav class="nav-links">
+      <nav class="nav-menu">
         <a (click)="scrollTo('features')">Features</a>
-        <a (click)="scrollTo('preview')">Live Board</a>
+        <a (click)="scrollTo('preview')">Product Tour</a>
         <a (click)="scrollTo('architecture')">Architecture</a>
-        <a (click)="scrollTo('metrics')">Metrics</a>
+        <a (click)="scrollTo('demo')">Live Demo</a>
+        <a href="https://github.com/laxman54716/SmartTaskPro" target="_blank" rel="noopener" class="github-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
       </nav>
 
-      <div class="nav-actions">
-        <ng-container *ngIf="isLoggedIn; else guestNav">
-          <a routerLink="/dashboard" class="btn btn-primary btn-glow">
-            <span>Dashboard →</span>
-          </a>
+      <div class="nav-cta">
+        <ng-container *ngIf="isLoggedIn; else guestActions">
+          <a routerLink="/dashboard" class="btn btn-primary btn-sm">Go to Workspace &rarr;</a>
         </ng-container>
-        <ng-template #guestNav>
-          <a routerLink="/login" class="btn btn-ghost">Sign In</a>
-          <a routerLink="/register" class="btn btn-primary btn-glow">
-            <span>Get Started Free →</span>
-          </a>
+        <ng-template #guestActions>
+          <a routerLink="/login" class="btn-link">Sign In</a>
+          <a routerLink="/register" class="btn btn-primary btn-sm">Get Started</a>
         </ng-template>
       </div>
     </div>
   </header>
 
   <!-- ── Hero Section ─────────────────────────────────────────────────── -->
-  <section class="hero-section">
-    <div class="hero-container">
-      <div class="badge-pill">
-        <span class="pulse-dot"></span>
-        <span>Version 2.0 Released &bull; Cloud Enterprise Ready</span>
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="announcement-badge">
+        <span class="badge-status"></span>
+        <span class="badge-text">Sprint 24 deployed</span>
+        <span class="badge-divider">&bull;</span>
+        <a (click)="scrollTo('demo')" class="badge-action">Try live demo with sample data &rarr;</a>
       </div>
 
-      <h1 class="hero-title">
-        Master Your Workflow with
-        <span class="gradient-text">Intelligent Task Orchestration</span>
+      <h1 class="hero-heading">
+        Project tracking built for<br />
+        <span class="highlight-text">engineers who move fast.</span>
       </h1>
 
-      <p class="hero-subtitle">
-        SmartTaskPro brings together agile Kanban workflows, milestone tracking, subtask meters,
-        and bank-grade stateless security into one blazingly fast workspace designed for peak developer velocity.
+      <p class="hero-desc">
+        A fast, keyboard-friendly task management workspace. Real-time Kanban columns,
+        subtask progress tracking, and stateless API security — without the enterprise bloat.
       </p>
 
-      <div class="hero-cta-group">
-        <a routerLink="/register" class="btn btn-primary btn-hero btn-glow">
-          <span>Create Free Account →</span>
+      <div class="hero-buttons">
+        <a routerLink="/register" class="btn btn-primary btn-lg">
+          Create Account Free
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
         </a>
-        <a routerLink="/login" class="btn btn-secondary btn-hero">
-          <span>Sign In to Workspace</span>
+        <a (click)="scrollTo('demo')" class="btn btn-secondary btn-lg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          Explore Live Demo
         </a>
-        <button (click)="scrollTo('features')" class="btn btn-outline btn-hero">
-          <span>Explore Capabilities ↓</span>
-        </button>
       </div>
 
-      <!-- Quick Trust Indicators -->
-      <div class="hero-trust-bar">
-        <div class="trust-item">
-          <span class="trust-icon">⚡</span>
-          <span><strong>&lt; 50ms</strong> Client Transitions</span>
+      <div class="shortcut-pills">
+        <span class="shortcut"><kbd>⌘K</kbd> Quick Search</span>
+        <span class="shortcut-dot">&bull;</span>
+        <span class="shortcut"><kbd>N</kbd> New Task</span>
+        <span class="shortcut-dot">&bull;</span>
+        <span class="shortcut"><kbd>Tab</kbd> Cycle Columns</span>
+        <span class="shortcut-dot">&bull;</span>
+        <span class="shortcut"><kbd>Esc</kbd> Close Modals</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Product Showcase (Realistic UI) ──────────────────────────────── -->
+  <section id="preview" class="showcase-section">
+    <div class="container">
+      <div class="browser-frame">
+        <div class="browser-topbar">
+          <div class="topbar-controls">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+          </div>
+          <div class="topbar-address">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>smarttaskpro.com/workspace/sprint-24</span>
+          </div>
+          <div class="topbar-user">
+            <span class="user-avatar-mini">LN</span>
+            <span class="user-name-mini">Laxman (Lead)</span>
+          </div>
         </div>
-        <div class="trust-separator">&bull;</div>
-        <div class="trust-item">
-          <span class="trust-icon">🔒</span>
-          <span><strong>JWT + BCrypt</strong> Stateless Auth</span>
-        </div>
-        <div class="trust-separator">&bull;</div>
-        <div class="trust-item">
-          <span class="trust-icon">🛡️</span>
-          <span><strong>Bucket4j</strong> Rate Limiting</span>
-        </div>
-        <div class="trust-separator">&bull;</div>
-        <div class="trust-item">
-          <span class="trust-icon">☁️</span>
-          <span><strong>Render + Vercel</strong> Cloud Core</span>
+
+        <div class="app-interface">
+          <!-- App Sidebar -->
+          <aside class="interface-sidebar">
+            <div class="sidebar-section">
+              <div class="sidebar-title">WORKSPACES</div>
+              <div class="sidebar-item active">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                </svg>
+                <span>Active Sprint</span>
+                <span class="sidebar-count">10</span>
+              </div>
+              <div class="sidebar-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+                <span>Backlog</span>
+                <span class="sidebar-count">14</span>
+              </div>
+              <div class="sidebar-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>Velocity</span>
+              </div>
+            </div>
+
+            <div class="sidebar-section">
+              <div class="sidebar-title">TAGS & MODULES</div>
+              <div class="tag-row"><span class="tag-bullet blue"></span> Backend (Spring)</div>
+              <div class="tag-row"><span class="tag-bullet purple"></span> Frontend (Angular)</div>
+              <div class="tag-row"><span class="tag-bullet amber"></span> DevOps / Cloud</div>
+              <div class="tag-row"><span class="tag-bullet red"></span> Security</div>
+            </div>
+
+            <div class="sidebar-footer-widget">
+              <div class="timer-label">FOCUS SESSION</div>
+              <div class="timer-time">24:18</div>
+              <div class="timer-status">● Sprint Mode Active</div>
+            </div>
+          </aside>
+
+          <!-- App Main Board -->
+          <main class="interface-board">
+            <div class="board-topbar">
+              <div class="board-heading">
+                <h2>Sprint 24: Core Infrastructure</h2>
+                <span class="sprint-dates">Nov 10 – Nov 24 &bull; 10 Issues</span>
+              </div>
+              <div class="board-actions">
+                <span class="filter-pill active">All (10)</span>
+                <span class="filter-pill">My Tasks (3)</span>
+                <span class="filter-pill">High Priority</span>
+                <button class="btn-new-task">+ New Task</button>
+              </div>
+            </div>
+
+            <div class="columns-container">
+              <!-- Column: To Do -->
+              <div class="board-col">
+                <div class="col-header">
+                  <span class="col-name">TO DO</span>
+                  <span class="col-badge">3</span>
+                </div>
+                <div class="task-card">
+                  <div class="card-meta">
+                    <span class="issue-id">STP-104</span>
+                    <span class="prio-tag high">High</span>
+                  </div>
+                  <h4 class="task-title">AI-Powered Smart Task Estimation Pipeline</h4>
+                  <p class="task-summary">Expose predictive complexity score endpoint using historical sprint duration metrics.</p>
+                  <div class="card-footer">
+                    <span class="task-tag">AI / Analytics</span>
+                    <span class="assignee-avatar" title="Laxman">LN</span>
+                  </div>
+                </div>
+
+                <div class="task-card">
+                  <div class="card-meta">
+                    <span class="issue-id">STP-106</span>
+                    <span class="prio-tag medium">Medium</span>
+                  </div>
+                  <h4 class="task-title">Enterprise OAuth2 Social Sign-In</h4>
+                  <p class="task-summary">Integrate Google & GitHub provider flows with automatic role mapping.</p>
+                  <div class="card-footer">
+                    <span class="task-tag">Security</span>
+                    <span class="assignee-avatar avatar-purple" title="Auth Team">AT</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Column: In Progress -->
+              <div class="board-col">
+                <div class="col-header">
+                  <span class="col-name">IN PROGRESS</span>
+                  <span class="col-badge active">2</span>
+                </div>
+                <div class="task-card card-focused">
+                  <div class="card-meta">
+                    <span class="issue-id">STP-102</span>
+                    <span class="prio-tag critical">Critical</span>
+                  </div>
+                  <h4 class="task-title">Architect Cloud Multi-Region Failover</h4>
+                  <p class="task-summary">Streaming PostgreSQL replica configuration and Route53 latency failover.</p>
+                  <div class="subtask-progress">
+                    <div class="progress-track">
+                      <div class="progress-fill" style="width: 66%"></div>
+                    </div>
+                    <span class="progress-label">2 of 3 subtasks</span>
+                  </div>
+                  <div class="card-footer">
+                    <span class="task-tag">DevOps</span>
+                    <span class="assignee-avatar avatar-blue" title="DevOps">DO</span>
+                  </div>
+                </div>
+
+                <div class="task-card">
+                  <div class="card-meta">
+                    <span class="issue-id">STP-103</span>
+                    <span class="prio-tag high">High</span>
+                  </div>
+                  <h4 class="task-title">Real-Time WebSocket Notification Bus</h4>
+                  <p class="task-summary">STOMP broker integration with Angular reactive event subscription stream.</p>
+                  <div class="subtask-progress">
+                    <div class="progress-track">
+                      <div class="progress-fill" style="width: 66%"></div>
+                    </div>
+                    <span class="progress-label">2 of 3 subtasks</span>
+                  </div>
+                  <div class="card-footer">
+                    <span class="task-tag">Frontend</span>
+                    <span class="assignee-avatar" title="Laxman">LN</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Column: Review -->
+              <div class="board-col">
+                <div class="col-header">
+                  <span class="col-name">IN REVIEW</span>
+                  <span class="col-badge">2</span>
+                </div>
+                <div class="task-card">
+                  <div class="card-meta">
+                    <span class="issue-id">STP-98</span>
+                    <span class="prio-tag critical">Critical</span>
+                  </div>
+                  <h4 class="task-title">Security Audit: Token Rate-Limiting</h4>
+                  <p class="task-summary">Validating Bucket4j token leak rate across production edge origins.</p>
+                  <div class="card-footer">
+                    <span class="task-tag">Security</span>
+                    <span class="assignee-avatar avatar-amber" title="QA Lead">QA</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Column: Completed -->
+              <div class="board-col">
+                <div class="col-header">
+                  <span class="col-name">DONE</span>
+                  <span class="col-badge done">3</span>
+                </div>
+                <div class="task-card card-completed">
+                  <div class="card-meta">
+                    <span class="issue-id">STP-95</span>
+                    <span class="prio-tag done">Verified</span>
+                  </div>
+                  <h4 class="task-title done-text">Production Docker Containerization</h4>
+                  <p class="task-summary">Multi-stage build reducing image size by 65% deployed to Render.</p>
+                  <div class="card-footer">
+                    <span class="task-tag">DevOps</span>
+                    <span class="completed-check">✓ Merged</span>
+                  </div>
+                </div>
+
+                <div class="task-card card-completed">
+                  <div class="card-meta">
+                    <span class="issue-id">STP-92</span>
+                    <span class="prio-tag done">Verified</span>
+                  </div>
+                  <h4 class="task-title done-text">Angular 18 Standalone Architecture</h4>
+                  <p class="task-summary">Event coalescing enabled with clean inject() functional dependency graph.</p>
+                  <div class="card-footer">
+                    <span class="task-tag">Architecture</span>
+                    <span class="completed-check">✓ Merged</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── Live Interactive Board Preview ───────────────────────────────── -->
-  <section id="preview" class="preview-section">
-    <div class="section-container">
-      <div class="section-badge">Live Interactive Experience</div>
-      <h2 class="section-title">Designed for Focus, Velocity, and Impact</h2>
-      <p class="section-subtitle">A high-precision task management interface built with Abyss & Aurora visual harmony.</p>
+  <!-- ── Built for Real Teams (Features Grid) ──────────────────────────── -->
+  <section id="features" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-label">CORE WORKFLOWS</span>
+        <h2 class="title">Everything needed to ship on schedule</h2>
+        <p class="desc">A cohesive toolset designed for engineering teams who value clarity over clutter.</p>
+      </div>
 
-      <div class="board-mockup-wrapper glass-panel">
-        <div class="mockup-header">
-          <div class="window-dots">
-            <span class="dot red"></span>
-            <span class="dot yellow"></span>
-            <span class="dot green"></span>
+      <div class="feature-rows">
+        <div class="feature-box">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="9"></rect>
+              <rect x="14" y="3" width="7" height="5"></rect>
+              <rect x="14" y="12" width="7" height="9"></rect>
+              <rect x="3" y="16" width="7" height="5"></rect>
+            </svg>
           </div>
-          <div class="mockup-search-bar">
-            <span>🔍 Search tasks, labels, priorities...</span>
+          <h3>Kanban Workflow Control</h3>
+          <p>Organize work into custom stages: To Do, In Progress, Review, and Done. Instant drag re-ordering and status transition hooks.</p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
           </div>
-          <div class="mockup-user-chip">
-            <span class="chip-avatar">⚡</span>
-            <span>Live Workspace</span>
+          <h3>Subtask Completion Meters</h3>
+          <p>Deconstruct epics into testable checklist steps. Visual progress meters calculate real-time completion percentages across your sprint.</p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </div>
+          <h3>Reactive In-App Alerts</h3>
+          <p>Instant notification bell dropdown driven by RxJS BehaviorSubjects. Never miss a deadline, review assignment, or system event.</p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h3>Stateless Token Security</h3>
+          <p>Protected by Spring Security with JWT tokens, BCrypt password hashing, and Bucket4j IP token-bucket rate limiting against brute force.</p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <h3>Integrated Focus Sessions</h3>
+          <p>Built-in 25-minute Pomodoro focus timer right in your sidebar. Protect developer deep work without switching to external apps.</p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+          </div>
+          <h3>Clean Full-Stack Architecture</h3>
+          <p>Strict separation of concerns: Angular 18 frontend with event coalescing connected to Java 21 Spring Boot REST controllers and PostgreSQL.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Architecture & Engineering Highlights ────────────────────────── -->
+  <section id="architecture" class="section section-dark">
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-label">BEHIND THE CODE</span>
+        <h2 class="title">Built with an engineer's attention to detail</h2>
+        <p class="desc">Engineered from the ground up for maintainability, speed, and clean code principles.</p>
+      </div>
+
+      <div class="tech-comparison-grid">
+        <div class="tech-card">
+          <div class="tech-badge">CLIENT LAYER</div>
+          <h3>Angular 18+ (Frontend)</h3>
+          <p>Modern standalone architecture with zero legacy NgModules. Uses signal inputs, inject() syntax, functional guards, and HTTP interceptors.</p>
+          <div class="code-snippet">
+            <code><span class="c-keyword">export const</span> authInterceptor: HttpInterceptorFn = (req, next) => &#123;<br />
+&nbsp;&nbsp;<span class="c-keyword">const</span> token = localStorage.getItem(<span class="c-str">'jwt_token'</span>);<br />
+&nbsp;&nbsp;<span class="c-keyword">return</span> next(token ? req.clone(&#123; headers: setToken &#125;) : req);<br />
+&#125;;</code>
           </div>
         </div>
 
-        <div class="mockup-columns">
-          <!-- Col 1: To Do -->
-          <div class="mockup-col">
-            <div class="col-head">
-              <span class="col-indicator todo-ind"></span>
-              <span class="col-title">To Do</span>
-              <span class="col-count">3</span>
-            </div>
-            <div class="mockup-card">
-              <div class="card-badge-row">
-                <span class="badge-priority badge-high">High Priority</span>
-                <span class="card-due">Due Tomorrow</span>
-              </div>
-              <h4 class="card-title">Setup CI/CD deployment pipelines</h4>
-              <p class="card-desc">Integrate GitHub Actions with Vercel and Render for automated validation.</p>
-              <div class="subtask-meter">
-                <div class="meter-bar"><div class="meter-fill" style="width: 66%"></div></div>
-                <span class="meter-text">2 / 3 subtasks</span>
-              </div>
-            </div>
-
-            <div class="mockup-card">
-              <div class="card-badge-row">
-                <span class="badge-priority badge-medium">Medium</span>
-                <span class="card-due">In 4 days</span>
-              </div>
-              <h4 class="card-title">Audit API Rate-Limit Buckets</h4>
-              <p class="card-desc">Fine-tune Bucket4j token leak rates for production traffic protection.</p>
-            </div>
-          </div>
-
-          <!-- Col 2: In Progress -->
-          <div class="mockup-col">
-            <div class="col-head">
-              <span class="col-indicator progress-ind"></span>
-              <span class="col-title">In Progress</span>
-              <span class="col-count">2</span>
-            </div>
-            <div class="mockup-card card-active-glow">
-              <div class="card-badge-row">
-                <span class="badge-priority badge-urgent">Urgent</span>
-                <span class="card-due pulse-text">Due Today</span>
-              </div>
-              <h4 class="card-title">Production CORS & Security Policy</h4>
-              <p class="card-desc">Verify preflight handling and origin patterns for edge deployments.</p>
-              <div class="subtask-meter">
-                <div class="meter-bar"><div class="meter-fill fill-urgent" style="width: 100%"></div></div>
-                <span class="meter-text">3 / 3 completed</span>
-              </div>
-            </div>
-
-            <div class="mockup-card">
-              <div class="card-badge-row">
-                <span class="badge-priority badge-low">Feature</span>
-                <span class="card-due">In 6 days</span>
-              </div>
-              <h4 class="card-title">Theme System Refinement</h4>
-              <p class="card-desc">Optimize 3-color Abyss & Aurora CSS variables for contrast perfection.</p>
-            </div>
-          </div>
-
-          <!-- Col 3: Completed -->
-          <div class="mockup-col">
-            <div class="col-head">
-              <span class="col-indicator done-ind"></span>
-              <span class="col-title">Completed</span>
-              <span class="col-count">12</span>
-            </div>
-            <div class="mockup-card card-done">
-              <div class="card-badge-row">
-                <span class="badge-priority badge-done">Completed</span>
-                <span class="card-check">✓ Done</span>
-              </div>
-              <h4 class="card-title strikethrough">Spring Boot 3 + Java 21 Migration</h4>
-              <p class="card-desc">Stateless JWT controllers and Dockerized multi-stage container verified.</p>
-            </div>
-
-            <div class="mockup-card card-done">
-              <div class="card-badge-row">
-                <span class="badge-priority badge-done">Completed</span>
-                <span class="card-check">✓ Done</span>
-              </div>
-              <h4 class="card-title strikethrough">In-App Real-time Notification Engine</h4>
-              <p class="card-desc">BehaviorSubject reactive event stream connected to top navigation bell.</p>
-            </div>
+        <div class="tech-card">
+          <div class="tech-badge">SERVER LAYER</div>
+          <h3>Java 21 & Spring Boot 3</h3>
+          <p>Stateless REST API adhering strictly to domain DTOs, Jakarta Bean Validation, JPA/Hibernate entities, and Bucket4j rate limiting.</p>
+          <div class="code-snippet">
+            <code><span class="c-annotation">&#64;PostMapping</span>(<span class="c-str">"/tasks"</span>)<br />
+<span class="c-keyword">public</span> ResponseEntity&lt;TaskResponse&gt; create(<br />
+&nbsp;&nbsp;<span class="c-annotation">&#64;Valid</span> <span class="c-annotation">&#64;RequestBody</span> TaskRequest req, Auth auth) &#123;<br />
+&nbsp;&nbsp;<span class="c-keyword">return</span> ResponseEntity.ok(service.create(req, auth));<br />
+&#125;</code>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── Core Features Section ────────────────────────────────────────── -->
-  <section id="features" class="features-section">
-    <div class="section-container">
-      <div class="section-badge">Platform Capabilities</div>
-      <h2 class="section-title">Engineered to Supercharge Team Execution</h2>
-      <p class="section-subtitle">Every tool and feature built directly around developer focus, reducing friction at every step.</p>
+  <!-- ── Interactive Live Demo Callout ─────────────────────────────────── -->
+  <section id="demo" class="section demo-section">
+    <div class="container">
+      <div class="demo-card">
+        <div class="demo-content">
+          <span class="demo-tag">LIVE TEST ACCOUNT</span>
+          <h2>Experience the workspace immediately</h2>
+          <p>
+            No registration needed. Log in with our pre-populated showcase account to explore active Kanban columns,
+            subtask checklists, and priority workflows.
+          </p>
 
-      <div class="features-grid">
-        <div class="feature-card glass-panel">
-          <div class="feature-icon icon-blue">📋</div>
-          <h3>Kanban Flow Visualization</h3>
-          <p>Organize, prioritize, and shift tasks across columns seamlessly. Visual status grouping keeps team velocity transparent at all times.</p>
-        </div>
+          <div class="credential-box">
+            <div class="cred-row">
+              <span class="cred-label">Username:</span>
+              <span class="cred-val">demo_user</span>
+            </div>
+            <div class="cred-row">
+              <span class="cred-label">Password:</span>
+              <span class="cred-val">Password&#64;123</span>
+            </div>
+          </div>
 
-        <div class="feature-card glass-panel">
-          <div class="feature-icon icon-coral">🎯</div>
-          <h3>Subtasks & Milestone Meters</h3>
-          <p>Break complex deliverables down into manageable steps with dynamic visual progress bars that calculate real-time completion percentages.</p>
-        </div>
-
-        <div class="feature-card glass-panel">
-          <div class="feature-icon icon-amber">🔔</div>
-          <h3>Reactive In-App Notifications</h3>
-          <p>Stay ahead with real-time alerts for impending deadlines, task assignments, and activity updates via an integrated notification bell.</p>
-        </div>
-
-        <div class="feature-card glass-panel">
-          <div class="feature-icon icon-emerald">🏷️</div>
-          <h3>Urgency & Category Tagging</h3>
-          <p>Color-coded priority matrix (Low, Medium, High, Urgent) helps your team isolate critical path blockers and deliver what matters first.</p>
-        </div>
-
-        <div class="feature-card glass-panel">
-          <div class="feature-icon icon-purple">🛡️</div>
-          <h3>Enterprise Security Shield</h3>
-          <p>BCrypt password hashing, stateless JWT authentication, and token-bucket rate limiting defend against unauthorized traffic and abuse.</p>
-        </div>
-
-        <div class="feature-card glass-panel">
-          <div class="feature-icon icon-cyan">☁️</div>
-          <h3>Multi-Cloud High Availability</h3>
-          <p>Angular standalone frontend on Vercel Global Edge CDN paired with Java Spring Boot containerized on Render for zero-downtime scalability.</p>
+          <div class="demo-actions">
+            <a routerLink="/login" class="btn btn-primary btn-lg">
+              Sign In with Demo Account &rarr;
+            </a>
+            <a routerLink="/register" class="btn btn-secondary btn-lg">
+              Create New Custom Account
+            </a>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── Tech Stack & Architecture ────────────────────────────────────── -->
-  <section id="architecture" class="arch-section">
-    <div class="section-container">
-      <div class="section-badge">Built with Modern Engineering</div>
-      <h2 class="section-title">Production-Grade Architecture</h2>
-      <p class="section-subtitle">A full-stack, modular architecture designed for performance, security, and developer maintainability.</p>
-
-      <div class="arch-grid">
-        <div class="arch-card glass-panel">
-          <div class="arch-header">
-            <span class="arch-icon">🅰️</span>
-            <div>
-              <h3>Frontend Layer</h3>
-              <span class="arch-tag">Angular 18+ &bull; TypeScript</span>
-            </div>
-          </div>
-          <ul class="arch-list">
-            <li><span>&check;</span> Standalone Components with Event Coalescing</li>
-            <li><span>&check;</span> RxJS Reactive State & BehaviorSubjects</li>
-            <li><span>&check;</span> Strict Route Guards & HTTP Interceptors</li>
-            <li><span>&check;</span> Abyss & Aurora Dynamic Glassmorphism CSS</li>
-          </ul>
+  <!-- ── Minimalist Footer ────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <div class="footer-logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          <span>SmartTaskPro</span>
         </div>
-
-        <div class="arch-card glass-panel">
-          <div class="arch-header">
-            <span class="arch-icon">🍃</span>
-            <div>
-              <h3>Backend Core</h3>
-              <span class="arch-tag">Java 21 &bull; Spring Boot 3</span>
-            </div>
-          </div>
-          <ul class="arch-list">
-            <li><span>&check;</span> RESTful API with Jakarta Validation</li>
-            <li><span>&check;</span> Spring Security with Stateless JWT Verification</li>
-            <li><span>&check;</span> Bucket4j Token-Bucket IP Rate Limiting</li>
-            <li><span>&check;</span> Spring Data JPA & Hibernate ORM</li>
-          </ul>
-        </div>
-
-        <div class="arch-card glass-panel">
-          <div class="arch-header">
-            <span class="arch-icon">🐳</span>
-            <div>
-              <h3>Cloud & DevOps</h3>
-              <span class="arch-tag">Docker &bull; Vercel &bull; Render</span>
-            </div>
-          </div>
-          <ul class="arch-list">
-            <li><span>&check;</span> Multi-stage Docker container build</li>
-            <li><span>&check;</span> Automatic Git CI/CD deployment pipelines</li>
-            <li><span>&check;</span> Strict CORS Origin Pattern White-listing</li>
-            <li><span>&check;</span> PostgreSQL database schema migrations</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Metrics & Benchmarks ─────────────────────────────────────────── -->
-  <section id="metrics" class="metrics-section">
-    <div class="section-container">
-      <div class="metrics-grid glass-panel">
-        <div class="metric-box">
-          <div class="metric-number gradient-text">99.9%</div>
-          <div class="metric-label">Uptime Reliability</div>
-          <p class="metric-desc">High-availability edge distribution on Vercel and Render.</p>
-        </div>
-
-        <div class="metric-box">
-          <div class="metric-number gradient-text">&lt; 100ms</div>
-          <div class="metric-label">API Preflight Response</div>
-          <p class="metric-desc">Fine-tuned CORS preflight caching and stateless token verification.</p>
-        </div>
-
-        <div class="metric-box">
-          <div class="metric-number gradient-text">100%</div>
-          <div class="metric-label">Stateless Security</div>
-          <p class="metric-desc">JWT authorization with cryptographic BCrypt user credential hashing.</p>
-        </div>
-
-        <div class="metric-box">
-          <div class="metric-number gradient-text">0 ms</div>
-          <div class="metric-label">Client Latency</div>
-          <p class="metric-desc">Instant client-side route navigation via Angular standalone router.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Final Call to Action ─────────────────────────────────────────── -->
-  <section class="cta-section">
-    <div class="section-container">
-      <div class="cta-banner glass-panel">
-        <div class="cta-badge">Ready to Level Up?</div>
-        <h2 class="cta-title">Streamline Your Project Workflow Today</h2>
-        <p class="cta-subtitle">
-          Experience the lightning speed and crisp clarity of SmartTaskPro. Create your workspace in seconds.
+        <p class="footer-copy">
+          Designed & Built by <strong>Laxman Narayankar</strong> &bull; Angular &bull; Spring Boot &bull; Docker
         </p>
-
-        <div class="cta-btn-group">
-          <a routerLink="/register" class="btn btn-primary btn-hero btn-glow">
-            <span>Create Your Free Account →</span>
-          </a>
-          <a routerLink="/login" class="btn btn-secondary btn-hero">
-            <span>Sign In to Existing Account</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Footer ───────────────────────────────────────────────────────── -->
-  <footer class="landing-footer">
-    <div class="footer-container">
-      <div class="footer-brand">
-        <div class="nav-logo">
-          <span class="logo-icon">⚡</span>
-          <span class="logo-text">SmartTask<span class="pro">Pro</span></span>
-        </div>
-        <p class="footer-tagline">
-          Modern enterprise project tracking built for engineers who value velocity and clarity.
-        </p>
       </div>
 
-      <div class="footer-links-group">
-        <div class="footer-col">
-          <h4>Navigation</h4>
-          <a (click)="scrollTo('features')">Features</a>
-          <a (click)="scrollTo('preview')">Live Board</a>
-          <a (click)="scrollTo('architecture')">Architecture</a>
-          <a (click)="scrollTo('metrics')">Metrics</a>
-        </div>
-
-        <div class="footer-col">
-          <h4>Account</h4>
-          <a routerLink="/login">Sign In</a>
-          <a routerLink="/register">Create Account</a>
-          <a routerLink="/dashboard">Workspace</a>
-        </div>
-
-        <div class="footer-col">
-          <h4>Technology</h4>
-          <span>Angular 18+</span>
-          <span>Spring Boot 3</span>
-          <span>Docker Container</span>
-          <span>PostgreSQL</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <div class="footer-bottom-inner">
-        <p>&copy; {{ currentYear }} SmartTaskPro. Designed & Developed by Laxman Narayankar.</p>
-        <div class="footer-chips">
-          <span class="footer-chip">Cloud Ready</span>
-          <span class="footer-chip">Vercel &bull; Render</span>
-        </div>
+      <div class="footer-right">
+        <a (click)="scrollTo('features')">Features</a>
+        <a (click)="scrollTo('architecture')">Architecture</a>
+        <a routerLink="/login">Sign In</a>
+        <a routerLink="/register">Register</a>
+        <a href="https://github.com/laxman54716/SmartTaskPro" target="_blank" rel="noopener">GitHub</a>
       </div>
     </div>
   </footer>
 </div>
-
