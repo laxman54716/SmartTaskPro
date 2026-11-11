@@ -1,30 +1,38 @@
 const Footer = () => {
+  const year = new Date().getFullYear();
   return (
-    <footer style={{ backgroundColor: '#1e293b', color: '#cbd5e1', padding: '3rem 1rem', marginTop: 'auto' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '2rem' }}>
+    <footer className="site-footer">
+      <div className="site-footer-inner">
         <div>
-          <h3 style={{ color: 'white', fontSize: '1.25rem', marginBottom: '1rem' }}>ShopCart</h3>
-          <p style={{ maxWidth: '300px' }}>Your one-stop destination for premium products across electronics, fashion, home essentials, and more.</p>
+          <div className="site-footer-brand-name">ShopCart</div>
+          <p className="site-footer-brand-desc">
+            Carefully sourced electronics, fashion, books, and home essentials.
+            Shipped fast, returned easy.
+          </p>
         </div>
-        <div>
-          <h4 style={{ color: 'white', marginBottom: '1rem' }}>Quick Links</h4>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <li><a href="/products" style={{ color: 'inherit', textDecoration: 'none' }}>Shop All</a></li>
-            <li><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Categories</a></li>
-            <li><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Special Offers</a></li>
+        <div className="site-footer-col">
+          <h4>Shop</h4>
+          <ul className="site-footer-links">
+            <li><a href="/products">All Products</a></li>
+            <li><a href="/products?category=1">Electronics</a></li>
+            <li><a href="/products?category=2">Laptops</a></li>
+            <li><a href="/products?category=8">Books</a></li>
+            <li><a href="/products?category=9">Gaming</a></li>
           </ul>
         </div>
-        <div>
-          <h4 style={{ color: 'white', marginBottom: '1rem' }}>Customer Service</h4>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <li><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Contact Us</a></li>
-            <li><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Shipping & Returns</a></li>
-            <li><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>FAQ</a></li>
+        <div className="site-footer-col">
+          <h4>Help</h4>
+          <ul className="site-footer-links">
+            <li><a href="#">Contact us</a></li>
+            <li><a href="#">Shipping & returns</a></li>
+            <li><a href="#">Track your order</a></li>
+            <li><a href="#">FAQ</a></li>
           </ul>
         </div>
       </div>
-      <div style={{ maxWidth: '1200px', margin: '2rem auto 0', paddingTop: '2rem', borderTop: '1px solid #334155', textAlign: 'center', fontSize: '0.875rem' }}>
-        &copy; {new Date().getFullYear()} ShopCart. All rights reserved.
+      <div className="site-footer-bottom">
+        <span>© {year} ShopCart. All rights reserved.</span>
+        <span>Built with React &amp; Node.js</span>
       </div>
     </footer>
   );

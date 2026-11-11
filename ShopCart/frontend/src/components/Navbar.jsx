@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useCart } from '../hooks/useCart';
 
@@ -20,16 +20,24 @@ const Navbar = () => {
         </Link>
         
         <div className="nav-links">
-          <Link to="/products" className="nav-link">Products</Link>
+          <NavLink to="/products" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+            Products
+          </NavLink>
           
           {user ? (
             <>
               {user.role === 'admin' ? (
-                <Link to="/admin" className="nav-link">Dashboard</Link>
+                <NavLink to="/admin" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                  Dashboard
+                </NavLink>
               ) : (
                 <>
-                  <Link to="/profile" className="nav-link">Profile</Link>
-                  <Link to="/orders" className="nav-link">Orders</Link>
+                  <NavLink to="/orders" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                    Orders
+                  </NavLink>
+                  <NavLink to="/profile" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                    Profile
+                  </NavLink>
                 </>
               )}
               
@@ -39,9 +47,9 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link to="/login" className="nav-link">Login</Link>
+              <Link to="/login" className="nav-link">Sign in</Link>
               <Link to="/register" className="btn btn-primary btn-sm">
-                Register
+                Create account
               </Link>
             </>
           )}

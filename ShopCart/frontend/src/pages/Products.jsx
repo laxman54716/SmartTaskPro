@@ -144,25 +144,41 @@ const Products = () => {
           ) : (
             <>
               <div className="product-grid">
-                {products.map(product => (
-                  <Link key={product.id} to={`/products/${product.id}`} className="card">
-                    <img src={product.image_url} alt={product.name} className="product-image" />
-                    <div className="product-info">
-                      <div className="product-category">{product.category_name}</div>
-                      <h3 className="product-title">{product.name}</h3>
-                      <div>
-                        {product.discount_price ? (
-                          <>
-                            <span className="product-price">${product.discount_price}</span>
-                            <span className="product-price-old">${product.price}</span>
-                          </>
-                        ) : (
-                          <span className="product-price">${product.price}</span>
+                {products.map(product => {
+                  const savings = product.discount_price
+                    ? Math.round(((product.price - product.discount_price) / product.price) * 100)
+                    : null;
+                  return (
+                    <Link key={product.id} to={`/products/${product.id}`} className="prod-card">
+                      <div className="prod-card-img-wrap">
+                        <img
+                          src={product.image_url || 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=500'}
+                          alt={product.name}
+                          className="prod-card-img"
+                          onError={e => { e.target.src = 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=500'; }}
+                        />
+                        {savings && <span className="prod-card-badge">-{savings}%</span>}
+                        {product.stock_quantity === 0 && !savings && (
+                          <span className="prod-card-badge" style={{ background: 'var(--text-muted)' }}>Sold out</span>
                         )}
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                      <div className="prod-card-body">
+                        <span className="prod-card-cat">{product.category_name}</span>
+                        <h3 className="prod-card-name">{product.name}</h3>
+                        <div className="prod-card-price">
+                          {product.discount_price ? (
+                            <>
+                              <span className="prod-card-price-now">${Number(product.discount_price).toFixed(2)}</span>
+                              <span className="prod-card-price-was">${Number(product.price).toFixed(2)}</span>
+                            </>
+                          ) : (
+                            <span className="prod-card-price-now">${Number(product.price).toFixed(2)}</span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
 
               {/* Pagination */}
