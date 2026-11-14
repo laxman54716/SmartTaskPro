@@ -8,15 +8,26 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
+
+const allowedOrigins = [
+  'http://localhost:5173', 
+  'http://localhost:5174', 
+  'http://127.0.0.1:5173', 
+  'http://127.0.0.1:5174',
+  ...(process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',').map(s => s.trim()) : [])
+];
+
 app.use(cors({ 
-  origin: [
-    'http://localhost:5173', 
-    'http://localhost:5174', 
-    'http://127.0.0.1:5173', 
-    'http://127.0.0.1:5174',
-    process.env.CLIENT_URL
-  ].filter(Boolean), 
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.endsWith('.onrender.com')) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  }, 
   credentials: true 
 }));
 app.use(express.json());
